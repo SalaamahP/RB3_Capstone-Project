@@ -51,28 +51,36 @@ public class Venue {
                 '}';
     }
 
-    private static class Builder {
+    public static class Builder {
         private Long venueId;
         private String venueName;
         private String venueLocation;
         private int capacity;
 
-        private Builder setVanueId(Long venueId) {
+        public Builder setVanueId(Long venueId) {
             this.venueId = venueId;
             return this;
         }
-        private Builder setVenueName(String venueName) {
+        public Builder setVenueName(String venueName) {
             this.venueName = venueName;
             return this;
         }
-        private Builder setVenueLocation(String venueLocation) {
+        public Builder setVenueLocation(String venueLocation) {
             this.venueLocation = venueLocation;
             return this;
         }
-        private Builder setCapacity(int capacity) {
+        public Builder setCapacity(int capacity) {
             this.capacity = capacity;
             return this;
         }
+        public  Builder copy (Venue venue){
+            this.setVanueId(venue.getVenueId());
+            this.setVenueName(venue.getVenueName());
+            this.setVenueLocation(venue.getVenueLocation());
+            this.setCapacity(venue.getCapacity());
+            return this;
+        }
+
         public Venue build() {
             return new Venue(this);
         }
