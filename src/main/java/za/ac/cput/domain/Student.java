@@ -73,6 +73,15 @@ public class Student extends User{
             this.email = email;
             return this;
         }
+        public Builder copy(Student student){
+            this.studentNumber = student.studentNumber;
+            this.name = student.name;
+            this.surname = student.surname;
+            this.phone = student.phone;
+            this.email = student.email;
+            return this;
+        }
+
         public Student build() {
             return new Student(this);
         }

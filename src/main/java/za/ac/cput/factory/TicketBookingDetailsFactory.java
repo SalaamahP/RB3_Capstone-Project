@@ -1,7 +1,7 @@
 // Author: Jaedon Prince (230473474)
 // Date: 18 May 2025
 
-package za.ac.cput.Factory;
+package za.ac.cput.factory;
 
 import za.ac.cput.domain.TicketBookingDetails;
 

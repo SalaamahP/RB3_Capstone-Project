@@ -1,4 +1,4 @@
-package za.ac.cput.Factory;
+package za.ac.cput.factory;
 
 import org.junit.jupiter.api.Test;
 import za.ac.cput.domain.Notification;
