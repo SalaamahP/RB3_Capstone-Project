@@ -46,12 +46,12 @@ public class TicketBookingDetails {
     public Status getStatus() { return status; }
 
     public static class Builder {
-        private String bookingId = UUID.randomUUID().toString(); // Auto ID
+        private String bookingId = UUID.randomUUID().toString(); // auto-generated
         private long userId;
         private String eventId;
         private int quantity;
         private double total;
-        private LocalDateTime dateBooked = LocalDateTime.now(); // Default to now
+        private LocalDateTime dateBooked = LocalDateTime.now();
         private PaymentOption paymentSelection;
         private Status status;
 
