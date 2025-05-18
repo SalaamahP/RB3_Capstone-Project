@@ -5,7 +5,7 @@
  * Date: 18/05/2025
  */
 
-package za.ac.cput.Factory;
+package za.ac.cput.factory;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

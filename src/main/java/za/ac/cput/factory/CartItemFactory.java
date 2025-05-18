@@ -1,7 +1,7 @@
 
 /*
  * CartItemFactory.java
- * CartItem POJO class
+ * CartItemFactory POJO class
  * Author: Patience Phakathi (222228431)
  * Date: 18/05/2025
  */
