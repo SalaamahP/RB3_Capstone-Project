@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class EventFactoryTest {
+public class EventFactoryTest {
 // Test case to verify the successful creation of an Event object
     @Test
     void testCreateEventSuccess() {
