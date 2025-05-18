@@ -16,7 +16,7 @@ public class Student extends User{
     public Student() {
     }
 
-    private Student (Builder builder) {
+    public Student (Builder builder) {
         super(builder.password, builder.name, builder.surname, builder.phone, builder.email);
         this.studentNumber = builder.studentNumber;
     }
