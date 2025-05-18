@@ -12,7 +12,7 @@ import jakarta.persistence.Enumerated;
 //@Entity
 //@DiscriminatorValue("Organizer")
 public class Organizer extends User {
-    private enum OrganizerType {
+    public enum OrganizerType {
         STUDENT_CLUB,
         FACULTY,
         CORPORATION
@@ -21,14 +21,21 @@ public class Organizer extends User {
     @Enumerated(EnumType.STRING)
     private OrganizerType organizerType;
 
-    public Organizer() {}
+    public Organizer() {
+        super();
+    }
 
     private Organizer(Builder builder) {
-        super(builder.password, builder.name, builder.surname, builder.phone, builder.email);
+        this.id = builder.id;
+        this.password = builder.password;
+        this.name = builder.name;
+        this.surname = builder.surname;
+        this.phone = builder.phone;
+        this.email = builder.email;
         this.organizerType = builder.organizerType;
     }
 
-    protected OrganizerType getOrganizerType() {
+    public OrganizerType getOrganizerType() {
         return organizerType;
     }
 
@@ -46,12 +53,18 @@ public class Organizer extends User {
     }
 
     public static class Builder {
+        private long id;
         private String password;
         private String name;
         private String surname;
         private String phone;
         private String email;
         private OrganizerType organizerType;
+
+        public Builder id(long id) {
+            this.id = id;
+            return this;
+        }
 
         public Builder setOrganizerType(OrganizerType organizerType) {
             this.organizerType = organizerType;
@@ -80,6 +93,16 @@ public class Organizer extends User {
 
         public Builder setEmail(String email) {
             this.email = email;
+            return this;
+        }
+
+        public Builder copy(Organizer organizer) {
+            this.password = organizer.password;
+            this.name = organizer.name;
+            this.surname = organizer.surname;
+            this.phone = organizer.phone;
+            this.email = organizer.email;
+            this.organizerType = organizer.organizerType;
             return this;
         }
 
