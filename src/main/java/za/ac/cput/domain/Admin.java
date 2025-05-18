@@ -12,7 +12,7 @@ import jakarta.persistence.Enumerated;
 //@Entity
 //@DiscriminatorValue("admin")
 public class Admin extends User {
-    private enum AdminRole {
+    public enum AdminRole {
         SYSTEM_ADMIN,
         STAFF
     }
@@ -20,10 +20,16 @@ public class Admin extends User {
     @Enumerated(EnumType.STRING)
     private AdminRole adminRole;
 
-    public Admin() {}
+    public Admin() { super();}
 
     private Admin(Builder builder) {
-        super(builder.password, builder.name, builder.surname, builder.phone, builder.email);
+        this.id = builder.id;
+        this.password = builder.password;
+        this.name = builder.name;
+        this.surname = builder.surname;
+        this.phone = builder.phone;
+        this.email = builder.email;
+        this.password = builder.password;
         this.adminRole = builder.adminRole;
     }
 
@@ -45,12 +51,18 @@ public class Admin extends User {
     }
 
     public static class Builder {
+        private long id;
         private String password;
         private String name;
         private String surname;
         private String phone;
         private String email;
         private AdminRole adminRole;
+
+        public Builder id(long id) {
+            this.id = id;
+            return this;
+        }
 
         public Builder setAdminRole(AdminRole adminRole) {
             this.adminRole = adminRole;
@@ -79,6 +91,16 @@ public class Admin extends User {
 
         public Builder setEmail(String email) {
             this.email = email;
+            return this;
+        }
+
+        public Builder copy(Admin admin) {
+            this.password = admin.password;
+            this.name = admin.name;
+            this.surname = admin.surname;
+            this.phone = admin.phone;
+            this.email = admin.email;
+            this.adminRole = admin.adminRole;
             return this;
         }
 
