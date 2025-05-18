@@ -1,6 +1,12 @@
 package za.ac.cput.factory;
 
-import za.ac.cput.Util.Helper;
+import za.ac.cput.util.Helper;
+/*VenueFactory.java
+Venue Factory class
+Author: Salaamah Peck (230207170)
+Date: 18 May 2025
+*/
+
 import za.ac.cput.domain.Venue;
 
 public class VenueFactory {

@@ -4,7 +4,7 @@ Author: Salaamah Peck (230207170)
 Date: 18 May 2025
 */
 
-package za.ac.cput.Util;
+package za.ac.cput.util;
 
 public class Helper {
     public static boolean isNullOrEmpty(String str) {
