@@ -8,6 +8,9 @@ package za.ac.cput.domain;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+
+import java.util.List;
 
 public class Venue {
     @Id
@@ -16,6 +19,9 @@ public class Venue {
     private String venueName;
     private String venueLocation;
     private int capacity;
+
+    @OneToMany(mappedBy = "venue")
+    private List<Event> events;
 
     private Venue (Builder builder){
         this.venueId = builder.venueId;

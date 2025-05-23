@@ -7,11 +7,19 @@ package za.ac.cput.domain;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 
-//@Entity
-//@DiscriminatorValue("Student")
+@Entity
+@DiscriminatorValue("Student")
 public class Student extends User{
-   private String studentNumber;
+
+    private String studentNumber;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 
     public Student() {
     }
