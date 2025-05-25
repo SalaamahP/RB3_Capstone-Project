@@ -1,5 +1,8 @@
 package za.ac.cput.domain;
 
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
 import java.time.LocalDateTime;
 //[author] Jaedon Prince, 230473474
 //[date] 11/05/2025
@@ -96,4 +99,11 @@ public class Notification {
             return new Notification(this);
         }
     }
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private Event event;
 }
