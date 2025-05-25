@@ -6,11 +6,12 @@ Date: 10/05/2025
 package za.ac.cput.domain;
 
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 
-//@Entity
-//@DiscriminatorValue("Organizer")
+import java.util.List;
+
+@Entity
+@DiscriminatorValue("Organizer")
 public class Organizer extends User {
     public enum OrganizerType {
         STUDENT_CLUB,
@@ -19,7 +20,11 @@ public class Organizer extends User {
     }
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "Organizer_Type", nullable = true)
     private OrganizerType organizerType;
+
+    @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Event> events; // An Organizer can manage multiple events
 
     public Organizer() {
         super();
