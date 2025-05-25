@@ -3,6 +3,9 @@
 
 package za.ac.cput.domain;
 
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -121,4 +124,11 @@ public class TicketBookingDetails {
                 ", status=" + status +
                 '}';
     }
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private Event event;
 }
