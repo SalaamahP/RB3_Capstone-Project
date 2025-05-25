@@ -7,34 +7,40 @@ Date: 11/05/2025
 
 package za.ac.cput.domain;
 
+import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import jakarta.persistence.*;
 import java.util.Objects;
-
 
 @Entity
 public class Rsvp {
 
     @Id
     private String rsvpID;
-    private String studentID;
-    private String eventID;
+
+
+    @ManyToOne
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;
+
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
+    private Event event;
 
     @Enumerated(EnumType.STRING)
     private Status status;
-
 
     public enum Status {
         CONFIRMED, PENDING, DECLINED
     }
 
     public Rsvp() {
-        // Default constructor required by JPA
+        // Default constructor for JPA
     }
 
     private Rsvp(Builder builder) {
         this.rsvpID = builder.rsvpID;
-        this.studentID = builder.studentID;
-        this.eventID = builder.eventID;
+        this.student = builder.student;
+        this.event = builder.event;
         this.status = builder.status;
     }
 
@@ -42,12 +48,13 @@ public class Rsvp {
         return rsvpID;
     }
 
-    public String getStudentID() {
-        return studentID;
+
+    public Student getStudent() {
+        return student;
     }
 
-    public String getEventID() {
-        return eventID;
+    public Event getEvent() {
+        return event;
     }
 
     public Status getStatus() {
@@ -71,17 +78,16 @@ public class Rsvp {
     public String toString() {
         return "Rsvp{" +
                 "rsvpID='" + rsvpID + '\'' +
-                ", studentID='" + studentID + '\'' +
-                ", eventID='" + eventID + '\'' +
+                ", student=" + student +
+                ", event=" + event +
                 ", status=" + status +
                 '}';
     }
 
-
     public static class Builder {
         private String rsvpID;
-        private String studentID;
-        private String eventID;
+        private Student student;
+        private Event event;
         private Status status;
 
         public Builder setRsvpID(String rsvpID) {
@@ -89,13 +95,13 @@ public class Rsvp {
             return this;
         }
 
-        public Builder setStudentID(String studentID) {
-            this.studentID = studentID;
+        public Builder setStudent(Student student) {
+            this.student = student;
             return this;
         }
 
-        public Builder setEventID(String eventID) {
-            this.eventID = eventID;
+        public Builder setEvent(Event event) {
+            this.event = event;
             return this;
         }
 

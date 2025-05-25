@@ -11,24 +11,49 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import za.ac.cput.domain.Rsvp;
 
+import org.junit.jupiter.api.Test;
+import za.ac.cput.domain.Event;
+import za.ac.cput.domain.Rsvp;
+import za.ac.cput.domain.Student;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 class RsvpFactoryTest {
-    @Test
-    void testCreateRsvp_Success() {
-        Rsvp rsvp = RsvpFactory.createRsvp("S12345", "E67890", "Confirmed");
-        Assertions.assertNotNull(rsvp);
-        Assertions.assertNotNull(rsvp.getRsvpID());
-        Assertions.assertEquals("S12345", rsvp.getStudentID());
-        Assertions.assertEquals("E67890", rsvp.getEventID());
-        Assertions.assertEquals("Confirmed", rsvp.getStatus());
+
+    private Student createTestStudent() {
+        Student student = new Student();
+        student.setStudentId("S12345");
+        return student;
+    }
+
+    private Event createTestEvent() {
+        Event event = new Event();
+        event.setEventId("E67890");
+        return event;
     }
 
     @Test
-    void testCreateRsvp_Fail_InvalidInputs() {
-        Rsvp rsvp1 = RsvpFactory.createRsvp((String)null, "E67890", "Confirmed");
-        Rsvp rsvp2 = RsvpFactory.createRsvp("S12345", "", "Confirmed");
-        Rsvp rsvp3 = RsvpFactory.createRsvp("S12345", "E67890", (String)null);
-        Assertions.assertNull(rsvp1, "Factory should return null when studentID is null.");
-        Assertions.assertNull(rsvp2, "Factory should return null when eventID is empty.");
-        Assertions.assertNull(rsvp3, "Factory should return null when status is null.");
+    void testCreateRsvp_Success() {
+        Student student = createTestStudent();
+        Event event = createTestEvent();
+
+        Rsvp rsvp = RsvpFactory.createRsvp(student, event, "Confirmed");
+        assertNotNull(rsvp);
+        assertNotNull(rsvp.getRsvpID());
+        assertEquals(student, rsvp.getStudent());
+        assertEquals(event, rsvp.getEvent());
+        assertEquals(Rsvp.Status.CONFIRMED, rsvp.getStatus());
+    }
+
+    @Test
+    void testCreateRsvp_InvalidInputs() {
+        Event event = createTestEvent();
+        Student student = createTestStudent();
+
+        assertNull(RsvpFactory.createRsvp(null, event, "Confirmed"));
+        assertNull(RsvpFactory.createRsvp(student, null, "Confirmed"));
+        assertNull(RsvpFactory.createRsvp(student, event, null));
+        assertNull(RsvpFactory.createRsvp(student, event, ""));
+        assertNull(RsvpFactory.createRsvp(student, event, "InvalidStatus"));
     }
 }
