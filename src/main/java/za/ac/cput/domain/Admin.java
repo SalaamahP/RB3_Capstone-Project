@@ -6,19 +6,27 @@ Date: 11/05/2025
 package za.ac.cput.domain;
 
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 
-//@Entity
-//@DiscriminatorValue("admin")
+import java.util.List;
+
+
+@Entity
+@DiscriminatorValue("admin")
 public class Admin extends User {
+
     public enum AdminRole {
         SYSTEM_ADMIN,
         STAFF
     }
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "Admin_Role", nullable = true)
     private AdminRole adminRole;
+
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<User> users; // Admin can manage multiple users
+
 
     public Admin() { super();}
 
