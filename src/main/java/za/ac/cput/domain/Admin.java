@@ -17,7 +17,7 @@ public class Admin extends User {
 
     public enum AdminRole {
         SYSTEM_ADMIN,
-        STAFF
+        ADMIN, STAFF
     }
 
     @Enumerated(EnumType.STRING)
