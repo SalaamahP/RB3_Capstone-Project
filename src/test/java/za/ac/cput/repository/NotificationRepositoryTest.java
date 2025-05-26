@@ -1,12 +1,11 @@
 //[author] Jaedon Prince, 230473474
 //[date] 25/05/2025
-package za.ac.cput.Repository;
+package za.ac.cput.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import za.ac.cput.domain.Notification;
-import za.ac.cput.repository.NotificationRepository;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
