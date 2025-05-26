@@ -25,7 +25,7 @@ class CartItemRepositoryTest {
     @BeforeEach
     void setUp() {
         student = new Student();
-        student.setStudentId("STU123");
+        student.setStudent("STU123");
         studentRepository.save(student);
 
         CartItem item1 = new CartItem.Builder()
