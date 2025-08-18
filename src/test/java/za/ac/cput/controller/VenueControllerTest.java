@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import za.ac.cput.domain.Venue;
@@ -23,7 +24,16 @@ class VenueControllerTest {
     @Autowired
     TestRestTemplate restTemplate;
 
-    private static final String BASE_URL = "http://localhost:8080/event/venue";
+
+    @LocalServerPort
+    private int port;
+
+    private  String BASE_URL; //= 8080/SEMS/student";
+
+    @BeforeEach
+    void init() {
+        BASE_URL = "http://localhost:" + port + "/SEMS/venue";
+    }
 
     @BeforeAll
     public static void setUp() {
@@ -57,7 +67,7 @@ class VenueControllerTest {
     @Order(3)
     void update() {
         Venue updatedVenue = new Venue.Builder().copy(venue).setVenueName("Admin Building").build();
-        String url = BASE_URL + "/update/";
+        String url = BASE_URL + "/update";
         this.restTemplate.put(url, updatedVenue);
 
         //Verify update by reading updated venue

@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/student")
+@CrossOrigin(origins = "http://localhost:5173")
 public class StudentController {
     private StudentService service;
 
@@ -38,7 +39,7 @@ public class StudentController {
         return service.delete(id);
     }
 
-    @GetMapping("/getall")
+    @GetMapping("/getAll")
     public List<Student> getAll() {
         return service.getAll();
     }

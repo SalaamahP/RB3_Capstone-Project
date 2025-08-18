@@ -28,6 +28,7 @@ public class StudentService implements IStudentService {
 
     @Override
     public Student update(Student student) {
+        System.out.println("updating student" + student);
       return this.repository.save(student);
     }
 
