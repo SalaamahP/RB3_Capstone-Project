@@ -5,12 +5,7 @@
  */
 package za.ac.cput.domain;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
@@ -25,9 +20,16 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventCategory eventCategory; // Enum for event categories
     private LocalDateTime dateTime;
-    private long venueId;
     private long userId;
     private double ticketPrice;
+
+    //@ManyToOne
+    //@JoinColumn(name="organizer_id")
+   // private Organizer organizer;
+
+    @ManyToOne
+    @JoinColumn(name="venue_id")
+    private Venue venue;
 
     public Event() {
     }
@@ -38,7 +40,7 @@ public class Event {
         this.eventDescription = builder.eventDescription;
         this.eventCategory = builder.eventCategory;
         this.dateTime = builder.dateTime;
-        this.venueId = builder.venueId;
+        this.venue = builder.venue;
         this.userId = builder.userId;
         this.ticketPrice = builder.ticketPrice;
     }
@@ -64,8 +66,8 @@ public class Event {
         return dateTime;
     }
 
-    public long getVenueId() {
-        return venueId;
+    public Venue getVenue() {
+        return venue;
     }
 
     public long getUserId() {
@@ -84,7 +86,7 @@ public class Event {
                 ", eventDescription='" + eventDescription + '\'' +
                 ", eventCategory=" + eventCategory +
                 ", dateTime=" + dateTime +
-                ", venueId=" + venueId +
+                ", venueId=" + venue +
                 ", userId=" + userId +
                 ", ticketPrice=" + ticketPrice +
                 '}';
@@ -96,7 +98,7 @@ public class Event {
         private String eventDescription;
         private EventCategory eventCategory;
         private LocalDateTime dateTime;
-        private long venueId;
+        private Venue venue;
         private long userId;
         private double ticketPrice;
 
@@ -125,8 +127,8 @@ public class Event {
             return this;
         }
 
-        public Builder setVenueId(long venueId) {
-            this.venueId = venueId;
+        public Builder setVenueId(Venue venue) {
+            this.venue = venue;
             return this;
         }
 

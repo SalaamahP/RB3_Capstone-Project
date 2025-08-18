@@ -4,10 +4,10 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import za.ac.cput.domain.Student;
-import za.ac.cput.domain.Venue;
 import za.ac.cput.factory.StudentFactory;
 
 import java.util.Objects;
@@ -23,7 +23,16 @@ class StudentControllerTest {
     @Autowired
     TestRestTemplate restTemplate;
 
-    private static final String BASE_URL = "http://localhost:8080/event/student";
+    @LocalServerPort
+    private int port;
+
+    private  String BASE_URL; //= 8080/SEMS/student";
+
+   @BeforeEach
+   void init() {
+       BASE_URL = "http://localhost:" + port + "/SEMS/student";
+   }
+
 
     @BeforeAll
     public static void setUp() {
@@ -38,7 +47,7 @@ class StudentControllerTest {
         assertNotNull(postResponse.getBody());
 
         student = postResponse.getBody();
-        assertEquals("Commerce Building", student.getName());
+        assertEquals("Bob", student.getName());
         System.out.println("Created: " + student.getName());
 
     }
@@ -55,17 +64,21 @@ class StudentControllerTest {
     @Test
     @Order(3)
     void update() {
+       assertNotNull(student.getId());
         Student updatedStudent = new Student.Builder().copy(student).setName("Robert").build();
-        String url = BASE_URL + "/update/";
+
+        String url = BASE_URL + "/update";
         this.restTemplate.put(url, updatedStudent);
 
-        //Verify update by reading updated venue
+        //Verify update by reading updated
         ResponseEntity<Student> response = this.restTemplate.getForEntity(BASE_URL + "/read/" + student.getId(), Student.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(updatedStudent.getName(), response.getBody().getName());
         System.out.println("Updated Student Name: " + response.getBody());
+
+        student = response.getBody();
 
     }
 

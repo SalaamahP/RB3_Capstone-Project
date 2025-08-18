@@ -3,6 +3,7 @@ Student POJO class
 Author: S Peck (230207170)
 Date: 10/05/2025
  */
+
 package za.ac.cput.domain;
 
 import jakarta.persistence.DiscriminatorValue;
@@ -27,11 +28,14 @@ public class Student extends User{
     public Student (Builder builder) {
         super(builder.password, builder.name, builder.surname, builder.phone, builder.email);
         this.studentNumber = builder.studentNumber;
+        this.id = builder.id;
     }
 
     public String getStudentNumber() {
         return studentNumber;
     }
+
+
 
 
 
@@ -49,12 +53,18 @@ public class Student extends User{
     }
 
     public static class Builder {
+        private Long id;
         private String studentNumber;
         private String password;
         private String name;
         private String surname;
         private String phone;
         private String email;
+
+        public Builder setId(Long id) {
+            this.id = id;
+            return this;
+        }
 
         public Builder setStudentNumber(String studentNumber){
             this.studentNumber = studentNumber;
@@ -82,7 +92,9 @@ public class Student extends User{
             return this;
         }
         public Builder copy(Student student){
+            this.id = student.getId();
             this.studentNumber = student.studentNumber;
+            this.password = student.password;
             this.name = student.name;
             this.surname = student.surname;
             this.phone = student.phone;

@@ -5,13 +5,11 @@ Date: 11/05/2025
  */
 package za.ac.cput.domain;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.util.List;
 
+@Entity
 public class Venue {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,8 +18,12 @@ public class Venue {
     private String venueLocation;
     private int capacity;
 
-    @OneToMany(mappedBy = "venue")
+    @OneToMany(mappedBy = "venue", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Event> events;
+
+    public Venue() {
+
+    }
 
     private Venue (Builder builder){
         this.venueId = builder.venueId;
@@ -63,9 +65,10 @@ public class Venue {
         private String venueLocation;
         private int capacity;
 
-        public Builder setVanueId(Long venueId) {
-            this.venueId = venueId;
-            return this;
+       public Builder setVenueId(Long venueId) {
+           this.venueId = venueId;
+           return this;
+
         }
         public Builder setVenueName(String venueName) {
             this.venueName = venueName;
@@ -80,7 +83,7 @@ public class Venue {
             return this;
         }
         public  Builder copy (Venue venue){
-            this.setVanueId(venue.getVenueId());
+            this.setVenueId(venue.getVenueId());
             this.setVenueName(venue.getVenueName());
             this.setVenueLocation(venue.getVenueLocation());
             this.setCapacity(venue.getCapacity());
