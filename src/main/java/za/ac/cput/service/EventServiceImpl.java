@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import za.ac.cput.domain.Event;
 import za.ac.cput.repository.EventRepository;
-import za.ac.cput.service.EventService;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,21 +24,21 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Event read(String id) {
+    public Event read(long id) {
         Optional<Event> event = eventRepository.findById(id);
         return event.orElse(null);
     }
 
     @Override
     public Event update(Event event) {
-        if (eventRepository.existsById(String.valueOf(event.getEventId()))) {
+        if (eventRepository.existsById(event.getEventId())) {
             return eventRepository.save(event);
         }
         return null;
     }
 
     @Override
-    public boolean delete(String id) {
+    public boolean delete(long id) {
         if (eventRepository.existsById(id)) {
             eventRepository.deleteById(id);
             return true;
