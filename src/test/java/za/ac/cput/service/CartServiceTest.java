@@ -2,81 +2,64 @@ package za.ac.cput.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import za.ac.cput.domain.Cart;
-import za.ac.cput.repository.CartRepository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
+@SpringBootTest
 public class CartServiceTest {
 
-    @Mock
-    private CartRepository cartRepository;
-
-    @InjectMocks
-    private za.ac.cput.service.CartServiceImpl cartService;
+    @Autowired
+    private CartService cartService;
 
     private Cart cart;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         cart = new Cart.Builder()
                 .setUserId("user123")
                 .setPaymentOption(Cart.PaymentOption.CASH)
                 .setBookingDate(LocalDateTime.now())
                 .build();
+        cart = cartService.create(cart);
     }
 
     @Test
-    void testCreate() {
-        when(cartRepository.save(cart)).thenReturn(cart);
-
-        Cart createdCart = cartService.create(cart);
-        assertNotNull(createdCart);
-        assertEquals("user123", createdCart.getUserId());
-
-        verify(cartRepository, times(1)).save(cart);
-    }
-
-    @Test
-    void testRead() {
-        when(cartRepository.findById("user123")).thenReturn(Optional.of(cart));
-
-        Cart foundCart = cartService.read("user123");
-        assertNotNull(foundCart);
-        assertEquals("user123", foundCart.getUserId());
-
-        verify(cartRepository, times(1)).findById("user123");
+    void testCreateAndRead() {
+        Cart readCart = cartService.read(cart.getCartId());
+        assertNotNull(readCart);
+        assertEquals(cart.getUserId(), readCart.getUserId());
     }
 
     @Test
     void testUpdate() {
-        when(cartRepository.existsById("user123")).thenReturn(true);
-        when(cartRepository.save(cart)).thenReturn(cart);
+        Cart updatedCart = new Cart.Builder()
+                .setCartId(cart.getCartId())
+                .setUserId("user456")
+                .setPaymentOption(Cart.PaymentOption.DEPOSIT)
+                .setBookingDate(cart.getBookingDate())
+                .build();
 
-        Cart updatedCart = cartService.update(cart);
-        assertNotNull(updatedCart);
-        assertEquals("user123", updatedCart.getUserId());
+        Cart saved = cartService.update(updatedCart);
+        assertEquals("user456", saved.getUserId());
+        assertEquals(Cart.PaymentOption.DEPOSIT, saved.getPaymentOption());
+    }
 
-        verify(cartRepository, times(1)).existsById("user123");
-        verify(cartRepository, times(1)).save(cart);
+    @Test
+    void testGetAll() {
+        List<Cart> carts = cartService.getAll();
+        assertFalse(carts.isEmpty());
     }
 
     @Test
     void testDelete() {
-        when(cartRepository.existsById("user123")).thenReturn(true);
-
-        boolean deleted = cartService.delete("user123");
-        assertTrue(deleted);
-
-        verify(cartRepository, times(1)).existsById("user123");
-        verify(cartRepository, times(1)).deleteById("user123");
+        boolean deleted = cartService.delete(cart.getCartId());
+        assertTrue(deleted, "Cart should be deleted successfully");
+        assertNull(cartService.read(cart.getCartId()), "Cart should not be found after deletion");
     }
 }
