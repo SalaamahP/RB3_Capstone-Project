@@ -26,12 +26,11 @@ public class CartController {
 
     @PostMapping
     public ResponseEntity<Cart> create(@RequestBody Cart cart) {
-        Cart createdCart = cartService.create(cart);
-        return ResponseEntity.ok(createdCart);
+        return ResponseEntity.ok(cartService.create(cart));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cart> read(@PathVariable String id) {
+    public ResponseEntity<Cart> read(@PathVariable Long id) {
         Cart cart = cartService.read(id);
         return cart != null ? ResponseEntity.ok(cart) : ResponseEntity.notFound().build();
     }
@@ -43,14 +42,12 @@ public class CartController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable String id) {
-        boolean deleted = cartService.delete(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        return cartService.delete(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
     @GetMapping
     public ResponseEntity<List<Cart>> getAll() {
-        List<Cart> carts = cartService.getAll();
-        return ResponseEntity.ok(carts);
+        return ResponseEntity.ok(cartService.getAll());
     }
 }
