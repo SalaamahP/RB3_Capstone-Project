@@ -26,31 +26,29 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity<Event> create(@RequestBody Event event) {
-        Event createdEvent = eventService.create(event);
-        return ResponseEntity.ok(createdEvent);
+        return ResponseEntity.ok(eventService.create(event));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Event> read(@PathVariable String id) {
+    public ResponseEntity<Event> read(@PathVariable long id) {
         Event event = eventService.read(id);
         return event != null ? ResponseEntity.ok(event) : ResponseEntity.notFound().build();
     }
 
     @PutMapping
     public ResponseEntity<Event> update(@RequestBody Event event) {
-        Event updatedEvent = eventService.update(event);
-        return updatedEvent != null ? ResponseEntity.ok(updatedEvent) : ResponseEntity.notFound().build();
+        Event updated = eventService.update(event);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable String id) {
+    public ResponseEntity<Void> delete(@PathVariable long id) {
         boolean deleted = eventService.delete(id);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
     @GetMapping
     public ResponseEntity<List<Event>> getAll() {
-        List<Event> events = eventService.getAll();
-        return ResponseEntity.ok(events);
+        return ResponseEntity.ok(eventService.getAll());
     }
 }
