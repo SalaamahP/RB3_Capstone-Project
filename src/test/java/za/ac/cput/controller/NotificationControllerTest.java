@@ -1,11 +1,7 @@
-//[author] Jaedon Prince, 230473474
-//[date] 25/05/2025
 package za.ac.cput.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -14,8 +10,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import za.ac.cput.domain.Notification;
 import za.ac.cput.service.NotificationService;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -23,63 +20,75 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(NotificationController.class)
-public class NotificationControllerTest {
+class NotificationControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ObjectMapper mapper;
+
     @MockBean
     private NotificationService service;
 
-    private Notification notification;
-
-    private final ObjectMapper mapper = new ObjectMapper();
-
-    @BeforeEach
-    void setUp() {
-        notification = new Notification.Builder()
-                .setNotificationID("NOTIF001")
-                .setMessage("You have a new event reminder!")
-                .setStudentID("STU123")
-                .setEventID("EV456")
-                .setTimestamp(LocalDateTime.now())
+    @Test
+    void createAndGet() throws Exception {
+        Notification n = new Notification.Builder()
+                .setNotificationID("N400")
+                .setMessage("Controller Test")
+                .setStudentID("S400")
+                .setEventID("E400")
                 .build();
-    }
 
-    @Test
-    void testCreateNotification() throws Exception {
-        when(service.create(any())).thenReturn(notification);
+        // Mock save
+        when(service.save(any(Notification.class))).thenReturn(n);
 
-        mockMvc.perform(post("/api/notifications")
+        mockMvc.perform(post("/notifications")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(notification)))
+                        .content(mapper.writeValueAsString(n)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.notificationID").value("NOTIF001"));
+                .andExpect(jsonPath("$.notificationID").value("N400"));
+
+        // Mock read
+        when(service.read("N400")).thenReturn(Optional.of(n));
+
+        mockMvc.perform(get("/notifications/N400"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Controller Test"));
     }
 
     @Test
-    void testReadNotification() throws Exception {
-        when(service.read("NOTIF001")).thenReturn(notification);
+    void getAllNotifications() throws Exception {
+        Notification n1 = new Notification.Builder()
+                .setNotificationID("N401")
+                .setMessage("Test 1")
+                .setStudentID("S401")
+                .setEventID("E401")
+                .build();
 
-        mockMvc.perform(get("/api/notifications/NOTIF001"))
+        Notification n2 = new Notification.Builder()
+                .setNotificationID("N402")
+                .setMessage("Test 2")
+                .setStudentID("S402")
+                .setEventID("E402")
+                .build();
+
+        List<Notification> notifications = Arrays.asList(n1, n2);
+
+        // Mock getAll
+        when(service.getAll()).thenReturn(notifications);
+
+        mockMvc.perform(get("/notifications"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.studentID").value("STU123"));
+                .andExpect(jsonPath("$.size()").value(2))
+                .andExpect(jsonPath("$[0].notificationID").value("N401"))
+                .andExpect(jsonPath("$[1].notificationID").value("N402"));
     }
 
     @Test
-    void testGetAllNotifications() throws Exception {
-        when(service.getAll()).thenReturn(Collections.singletonList(notification));
-
-        mockMvc.perform(get("/api/notifications"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1));
-    }
-
-    @Test
-    void testDeleteNotification() throws Exception {
-        when(service.delete("NOTIF001")).thenReturn(true);
-
-        mockMvc.perform(delete("/api/notifications/NOTIF001"))
-                .andExpect(status().isOk());
+    void deleteNotification() throws Exception {
+        // Mock delete (no return needed)
+        mockMvc.perform(delete("/notifications/N400"))
+                .andExpect(status().isNoContent());
     }
 }

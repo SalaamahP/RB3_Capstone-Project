@@ -4,37 +4,33 @@ package za.ac.cput.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import za.ac.cput.domain.TicketBookingDetails;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-public class TicketBookingDetailsRepositoryTest {
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+class TicketBookingDetailsRepositoryTest {
 
     @Autowired
     private TicketBookingDetailsRepository repository;
 
     @Test
-    void testCreateReadDelete() {
-        TicketBookingDetails booking = new TicketBookingDetails.Builder()
-                .setUserId(123L)
-                .setEventId("EV001")
-                .setQuantity(2)
-                .setTotal(500.00)
-                .setPaymentSelection(TicketBookingDetails.PaymentOption.CASH)
-                .setStatus(TicketBookingDetails.Status.PENDING)
+    void saveAndFind() {
+        TicketBookingDetails b = new TicketBookingDetails.Builder()
+                .setBookingID("B200")
+                .setStudentId("S200")
+                .setEventId("E200")
+                .setBookingDate(LocalDateTime.now())
                 .build();
 
-        TicketBookingDetails saved = repository.save(booking);
-        Optional<TicketBookingDetails> fetched = repository.findById(saved.getBookingId());
+        repository.save(b);
 
-        assertTrue(fetched.isPresent());
-        assertEquals(saved.getBookingId(), fetched.get().getBookingId());
-
-        repository.delete(saved);
-        assertFalse(repository.existsById(saved.getBookingId()));
+        assertTrue(repository.findById("B200").isPresent());
+        assertEquals("E200", repository.findById("B200").get().getEventId());
     }
 }

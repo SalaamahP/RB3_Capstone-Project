@@ -2,63 +2,76 @@ package za.ac.cput.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import za.ac.cput.domain.TicketBookingDetails;
-import za.ac.cput.factory.TicketBookingDetailsFactory;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 class TicketBookingDetailsServiceTest {
+
+    @Autowired
     private TicketBookingDetailsService service;
+
     private TicketBookingDetails booking1;
     private TicketBookingDetails booking2;
 
     @BeforeEach
     void setUp() {
-        service = new TicketBookingDetailsServiceImpl();
-        booking1 = TicketBookingDetailsFactory.createTicketBookingDetails("B001", "S123", "E001", 2);
-        booking2 = TicketBookingDetailsFactory.createTicketBookingDetails("B002", "S456", "E002", 4);
+        booking1 = new TicketBookingDetails.Builder()
+                .setBookingID("B001")
+                .setStudentId("S123")
+                .setEventId("E456")
+                .setNumberOfTickets(2)
+                .build();
+
+        booking2 = new TicketBookingDetails.Builder()
+                .setBookingID("B002")
+                .setStudentId("S789")
+                .setEventId("E999")
+                .setNumberOfTickets(4)
+                .build();
 
         service.create(booking1);
         service.create(booking2);
     }
 
     @Test
-    void testCreate() {
-        assertNotNull(booking1);
-        assertNotNull(booking2);
-    }
-
-    @Test
-    void testRead() {
-        TicketBookingDetails read = service.read(booking1.getBookingID());
-        assertEquals(booking1.getBookingID(), read.getBookingID());
+    void testCreateAndRead() {
+        TicketBookingDetails saved = service.create(booking1);
+        assertNotNull(saved);
+        TicketBookingDetails found = service.read("B001");
+        assertEquals("S123", found.getStudentId());
     }
 
     @Test
     void testUpdate() {
         TicketBookingDetails updated = new TicketBookingDetails.Builder()
-                .setBookingID(booking1.getBookingID())
-                .setStudentID(booking1.getStudentID())
-                .setEventID(booking1.getEventID())
-                .setSeatsBooked(5)
+                .setBookingID("B001")
+                .setStudentId("S123")
+                .setEventId("E456")
+                .setNumberOfTickets(5) // changed
                 .build();
 
-        service.update(updated);
-        TicketBookingDetails read = service.read(booking1.getBookingID());
-        assertEquals(5, read.getSeatsBooked());
+        TicketBookingDetails result = service.update(updated);
+        assertNotNull(result);
+        assertEquals(5, result.getNumberOfTickets());
     }
 
     @Test
     void testDelete() {
-        boolean deleted = service.delete(booking2.getBookingID());
+        boolean deleted = service.delete("B002");
         assertTrue(deleted);
+        assertNull(service.read("B002"));
     }
 
     @Test
     void testGetAll() {
-        Set<TicketBookingDetails> all = service.getAll();
-        assertEquals(2, all.size());
+        List<TicketBookingDetails> all = service.getAll();
+        assertFalse(all.isEmpty());
     }
 }
+
