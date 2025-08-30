@@ -23,20 +23,21 @@ public class Organizer extends User {
     @Column(name = "Organizer_Type", nullable = true)
     private OrganizerType organizerType;
 
-    @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Event> events; // An Organizer can manage multiple events
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+//    @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+//    //@JoinColumn(name = "user_id")
+//    private List<Event> events; // An Organizer can manage multiple events
 
     public Organizer() {
-        super();
+
     }
 
     private Organizer(Builder builder) {
+        super(builder.password, builder.name, builder.surname, builder.phone, builder.email);
         this.id = builder.id;
-        this.password = builder.password;
-        this.name = builder.name;
-        this.surname = builder.surname;
-        this.phone = builder.phone;
-        this.email = builder.email;
         this.organizerType = builder.organizerType;
     }
 
@@ -66,7 +67,7 @@ public class Organizer extends User {
         private String email;
         private OrganizerType organizerType;
 
-        public Builder id(long id) {
+        public Builder setId(long id) {
             this.id = id;
             return this;
         }
@@ -102,6 +103,7 @@ public class Organizer extends User {
         }
 
         public Builder copy(Organizer organizer) {
+            this.id = organizer.id;
             this.password = organizer.password;
             this.name = organizer.name;
             this.surname = organizer.surname;

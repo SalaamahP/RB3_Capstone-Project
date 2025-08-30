@@ -7,7 +7,7 @@ package za.ac.cput.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import za.ac.cput.domain.Admin;
-import za.ac.cput.service.AdminService;
+import za.ac.cput.service.IAdminService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,10 +16,10 @@ import java.util.List;
 @RequestMapping("/api/admin")
 
 public class AdminController {
-    private final AdminService adminService;
+    private final IAdminService adminService;
 
     @Autowired
-    public AdminController(AdminService adminService) {
+    public AdminController(IAdminService adminService) {
         this.adminService = adminService;
     }
 

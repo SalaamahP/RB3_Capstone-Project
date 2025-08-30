@@ -5,9 +5,11 @@
  */
 package za.ac.cput.Repository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import za.ac.cput.domain.Organizer;
 import za.ac.cput.domain.Organizer.OrganizerType;
 import za.ac.cput.repository.OrganizerRepository;
@@ -19,15 +21,16 @@ import java.util.stream.StreamSupport;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
+@SpringBootTest
 public class OrganizerRepositoryTest {
     @Autowired
     private OrganizerRepository organizerRepository;
 
     private Organizer organizer;
 
-    @Test
+    @BeforeEach
     void setUp() {
+        organizerRepository.deleteAll();
         organizer = new Organizer.Builder()
                 .setName("Zoe")
                 .setSurname("Doherty")
@@ -35,7 +38,7 @@ public class OrganizerRepositoryTest {
                 .setEmail("doherty@cput.ac.za")
                 .setOrganizerType(OrganizerType.FACULTY)
                 .build();
-        organizerRepository.save(organizer);
+        organizer = organizerRepository.save(organizer);
     }
 
     @Test

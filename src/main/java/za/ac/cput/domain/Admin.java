@@ -12,7 +12,7 @@ import java.util.List;
 
 
 @Entity
-@DiscriminatorValue("admin")
+@DiscriminatorValue("Admin")
 public class Admin extends User {
 
     public enum AdminRole {
@@ -24,20 +24,23 @@ public class Admin extends User {
     @Column(name = "Admin_Role", nullable = true)
     private AdminRole adminRole;
 
-    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<User> users; // Admin can manage multiple users
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+//    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id")
+//    private List<User> users; // Admin can manage multiple users
 
 
-    public Admin() { super();}
+
+    public Admin() {
+
+    }
 
     private Admin(Builder builder) {
+        super(builder.password, builder.name, builder.surname, builder.phone, builder.email);
         this.id = builder.id;
-        this.password = builder.password;
-        this.name = builder.name;
-        this.surname = builder.surname;
-        this.phone = builder.phone;
-        this.email = builder.email;
-        this.password = builder.password;
         this.adminRole = builder.adminRole;
     }
 
@@ -67,7 +70,7 @@ public class Admin extends User {
         private String email;
         private AdminRole adminRole;
 
-        public Builder id(long id) {
+        public Builder setId(Long id) {
             this.id = id;
             return this;
         }
@@ -103,6 +106,7 @@ public class Admin extends User {
         }
 
         public Builder copy(Admin admin) {
+            this.id = admin.id;
             this.password = admin.password;
             this.name = admin.name;
             this.surname = admin.surname;

@@ -1,93 +1,73 @@
 package za.ac.cput.service;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import za.ac.cput.domain.Organizer;
 import za.ac.cput.domain.Organizer.OrganizerType;
-import za.ac.cput.repository.OrganizerRepository;
+import za.ac.cput.factory.OrganizerFactory;
+
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
-
+import static org.junit.jupiter.api.Assertions.*;
+@SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 
 public class OrganizerServiceTest {
 
-    @Mock
-    private OrganizerRepository organizerRepository;
+    @Autowired
+    private OrganizerService organizerService;
 
-    @InjectMocks
-    private OrganizerServiceImpl organizerService;
+    private static Organizer organizer;
 
-    private Organizer organizer;
+    @BeforeAll
+    static void setUp() {
+        organizer = OrganizerFactory.createOrganizer(
+                "Xorg123", "Siphokazi", "Kile", "0123456789", "kile@gmail.com", OrganizerType.STUDENT_CLUB);
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        organizer = new Organizer.Builder()
-                .setName("Mary")
-                .setSurname("Smith")
-                .setPhone("0693692590")
-                .setEmail("smithm@gmail.com")
-                .setPassword("k13/admin")
-                .setOrganizerType(OrganizerType.STUDENT_CLUB)
-                .build();
-        organizerRepository.save(organizer);
-        System.out.println(organizer.getId());
     }
 
     @Test
-    void testCreateOrganizer() {
-        when(organizerRepository.save(any(Organizer.class))).thenAnswer(invocation -> {
-            Organizer savedOrganizer = invocation.getArgument(0);
-            savedOrganizer = new Organizer.Builder().copy(savedOrganizer).id(2L).build();// Simulate ID generation
-            return savedOrganizer;
-        });
-
-        Organizer createdOrganizer = organizerService.create(organizer);
-        assertNotNull(createdOrganizer);
-        assertEquals(OrganizerType.STUDENT_CLUB, createdOrganizer.getOrganizerType());
+    @Order(1)
+    void add() {
+        Organizer addOrganizer = organizerService.create(organizer);
+        assertNotNull(addOrganizer.getId());
+        assertEquals("Siphokazi", addOrganizer.getName());
+        organizer = addOrganizer;
     }
 
     @Test
-    void testReadOrganizer() {
-        when(organizerRepository.findById(anyLong())).thenReturn(Optional.of(organizer));
-        Organizer readOrganizer = organizerService.read(2L);
+    @Order(2)
+    void read() {
+        Organizer readOrganizer = organizerService.read(organizer.getId());
         assertNotNull(readOrganizer);
-        assertEquals("Mary", readOrganizer.getName());
+        assertEquals(organizer.getEmail(), readOrganizer.getEmail());
     }
 
     @Test
-    void testUpdateOrganizer() {
-        Organizer updatedOrganizer = new Organizer.Builder()
+    @Order(3)
+    void update() {
+        Organizer updateOrganizer = new Organizer.Builder()
                 .copy(organizer)
-                .setName("John")
+                .setName("Adams")
                 .build();
-        when(organizerRepository.save(any(Organizer.class))).thenReturn(updatedOrganizer);
-
-        Organizer result = organizerService.update(updatedOrganizer);
-        assertNotNull(result);
-        assertEquals("John", result.getName());
+        Organizer updated = organizerService.update(updateOrganizer);
+        assertEquals("Adams", updated.getName());
     }
 
     @Test
-    void testDeleteOrganizer() {
-        when(organizerRepository.findById(anyLong())).thenReturn(Optional.of(organizer));
-        organizerService.delete(2L);
-        verify(organizerRepository, times(1)).deleteById(2L);
+    @Order(5)
+    void delete() {
+        boolean deletedOrganizer = organizerService.delete(organizer.getId());
+        assertTrue(deletedOrganizer);
+        assertNull(organizerService.read(organizer.getId()));
     }
 
     @Test
-    void testGetAllOrganizers() {
-        when(organizerRepository.findAll()).thenReturn(List.of(organizer));
-        List<Organizer> organizers = organizerService.getAll();
-        assertNotNull(organizers);
-        assertEquals(1, organizers.size());
-        assertEquals("smithm@gmail.com", organizers.get(0).getEmail());
+    @Order(4)
+    void getAll() {
+        List<Organizer> organizerList = organizerService.getAll();
+        assertNotNull(organizerList);
+        //System.out.println("Organizer List: " + organizerList);
     }
 }
