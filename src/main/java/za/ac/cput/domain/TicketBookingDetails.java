@@ -1,65 +1,62 @@
 // Author: Jaedon Prince (230473474)
 // Date: 11 May 2025
-
 package za.ac.cput.domain;
 
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.UUID;
 
+@Entity
 public class TicketBookingDetails {
-    private final String bookingId;
-    private final long userId;
-    private final String eventId;
-    private final int quantity;
-    private final double total;
-    private final LocalDateTime dateBooked;
-    private final PaymentOption paymentSelection;
-    private final Status status;
 
-    public enum PaymentOption {
-        DEPOSIT, CASH
-    }
+    @Id
+    private String bookingID;
+    private String eventId;
+    private String studentId;
+    private int numberOfTickets;
+    private LocalDateTime bookingDate; // <-- new field
 
-    public enum Status {
-        PENDING, CONFIRMED, CANCELLED
-    }
+    // no-args constructor for JPA
+    protected TicketBookingDetails() {}
 
     private TicketBookingDetails(Builder builder) {
-        this.bookingId = builder.bookingId;
-        this.userId = builder.userId;
+        this.bookingID = builder.bookingID;
         this.eventId = builder.eventId;
-        this.quantity = builder.quantity;
-        this.total = builder.total;
-        this.dateBooked = builder.dateBooked;
-        this.paymentSelection = builder.paymentSelection;
-        this.status = builder.status;
+        this.studentId = builder.studentId;
+        this.numberOfTickets = builder.numberOfTickets;
+        this.bookingDate = builder.bookingDate; // <-- assign from builder
     }
 
-    public String getBookingId() { return bookingId; }
-    public long getUserId() { return userId; }
-    public String getEventId() { return eventId; }
-    public int getQuantity() { return quantity; }
-    public double getTotal() { return total; }
-    public LocalDateTime getDateBooked() { return dateBooked; }
-    public PaymentOption getPaymentSelection() { return paymentSelection; }
-    public Status getStatus() { return status; }
+    public String getBookingID() {
+        return bookingID;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public int getNumberOfTickets() {
+        return numberOfTickets;
+    }
+
+    public LocalDateTime getBookingDate() {
+        return bookingDate;
+    }
 
     public static class Builder {
-        private String bookingId = UUID.randomUUID().toString(); // auto-generated
-        private long userId;
+        private String bookingID;
         private String eventId;
-        private int quantity;
-        private double total;
-        private LocalDateTime dateBooked = LocalDateTime.now();
-        private PaymentOption paymentSelection;
-        private Status status;
+        private String studentId;
+        private int numberOfTickets;
+        private LocalDateTime bookingDate; // <-- new field in builder
 
-        public Builder setUserId(long userId) {
-            this.userId = userId;
+        public Builder setBookingID(String bookingID) {
+            this.bookingID = bookingID;
             return this;
         }
 
@@ -68,28 +65,18 @@ public class TicketBookingDetails {
             return this;
         }
 
-        public Builder setQuantity(int quantity) {
-            this.quantity = quantity;
+        public Builder setStudentId(String studentId) {
+            this.studentId = studentId;
             return this;
         }
 
-        public Builder setTotal(double total) {
-            this.total = total;
+        public Builder setNumberOfTickets(int numberOfTickets) {
+            this.numberOfTickets = numberOfTickets;
             return this;
         }
 
-        public Builder setDateBooked(LocalDateTime dateBooked) {
-            this.dateBooked = dateBooked;
-            return this;
-        }
-
-        public Builder setPaymentSelection(PaymentOption paymentSelection) {
-            this.paymentSelection = paymentSelection;
-            return this;
-        }
-
-        public Builder setStatus(Status status) {
-            this.status = status;
+        public Builder setBookingDate(LocalDateTime bookingDate) { // <-- new setter
+            this.bookingDate = bookingDate;
             return this;
         }
 
@@ -99,36 +86,27 @@ public class TicketBookingDetails {
     }
 
     @Override
+    public String toString() {
+        return "TicketBookingDetails{" +
+                "bookingID='" + bookingID + '\'' +
+                ", eventId='" + eventId + '\'' +
+                ", studentId='" + studentId + '\'' +
+                ", numberOfTickets=" + numberOfTickets +
+                ", bookingDate=" + bookingDate +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof TicketBookingDetails)) return false;
         TicketBookingDetails that = (TicketBookingDetails) o;
-        return Objects.equals(bookingId, that.bookingId);
+        return Objects.equals(bookingID, that.bookingID);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(bookingId);
+        return Objects.hash(bookingID);
     }
-
-    @Override
-    public String toString() {
-        return "TicketBookingDetails{" +
-                "bookingId='" + bookingId + '\'' +
-                ", userId=" + userId +
-                ", eventId='" + eventId + '\'' +
-                ", quantity=" + quantity +
-                ", total=" + total +
-                ", dateBooked=" + dateBooked +
-                ", paymentSelection=" + paymentSelection +
-                ", status=" + status +
-                '}';
-    }
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    private Event event;
 }
+

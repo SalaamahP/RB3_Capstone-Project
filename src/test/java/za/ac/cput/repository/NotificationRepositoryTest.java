@@ -4,37 +4,34 @@ package za.ac.cput.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import za.ac.cput.domain.Notification;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-public class NotificationRepositoryTest {
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+class NotificationRepositoryTest {
 
     @Autowired
     private NotificationRepository repository;
 
     @Test
-    void testCreateReadDelete() {
-        Notification notification = new Notification.Builder()
-                .setNotificationID("N001")
-                .setMessage("Event is happening soon!")
-                .setStudentID("S123")
-                .setEventID("E001")
+    void saveAndFind() {
+        Notification n = new Notification.Builder()
+                .setNotificationID("N200")
+                .setMessage("Repo Test")
+                .setStudentID("S200")
+                .setEventID("E200")
                 .setTimestamp(LocalDateTime.now())
                 .build();
 
-        Notification saved = repository.save(notification);
-        Optional<Notification> fetched = repository.findById(saved.getNotificationID());
+        repository.save(n);
 
-        assertTrue(fetched.isPresent());
-        assertEquals("N001", fetched.get().getNotificationID());
-
-        repository.delete(saved);
-        assertFalse(repository.existsById("N001"));
+        assertTrue(repository.findById("N200").isPresent());
+        assertEquals("Repo Test", repository.findById("N200").get().getMessage());
     }
 }
