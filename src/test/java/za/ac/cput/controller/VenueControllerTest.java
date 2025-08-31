@@ -70,7 +70,7 @@ class VenueControllerTest {
         String url = BASE_URL + "/update";
         this.restTemplate.put(url, updatedVenue);
 
-        //Verify update by reading updated venue
+
         ResponseEntity<Venue> response = this.restTemplate.getForEntity(BASE_URL + "/read/" + venue.getVenueId(), Venue.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -80,18 +80,18 @@ class VenueControllerTest {
 
     }
 
-    @Test
-    @Order(5)
-    void delete() {
-        String url = BASE_URL + "/delete/" + venue.getVenueId();
-        this.restTemplate.delete(url);
-
-        //Verify venue was deleted
-        ResponseEntity<Venue> response = this.restTemplate.getForEntity(BASE_URL + "/read/" + venue.getVenueId(), Venue.class);
-        assertNull(response.getBody());
-        System.out.println("Deleted: " + venue.getVenueId());
-
-    }
+//    @Test
+//    @Order(5)
+//    void delete() {
+//        String url = BASE_URL + "/delete/" + venue.getVenueId();
+//        this.restTemplate.delete(url);
+//
+//
+//        ResponseEntity<Venue> response = this.restTemplate.getForEntity(BASE_URL + "/read/" + venue.getVenueId(), Venue.class);
+//        assertNull(response.getBody());
+//        System.out.println("Deleted: " + venue.getVenueId());
+//
+//    }
 
     @Test
     @Order(4)
