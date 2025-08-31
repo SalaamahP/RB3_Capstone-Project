@@ -1,8 +1,3 @@
-/* CartController.java
- * Cart Controller class
- * Author: Nobahle Vuyiswa Nzimande (222641533)
- * Date: 25 May 2025
- */
 package za.ac.cput.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +9,7 @@ import za.ac.cput.service.CartService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("/cart")
 public class CartController {
 
     private final CartService cartService;
@@ -24,29 +19,30 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Cart> create(@RequestBody Cart cart) {
         return ResponseEntity.ok(cartService.create(cart));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/read/{id}")
     public ResponseEntity<Cart> read(@PathVariable Long id) {
         Cart cart = cartService.read(id);
-        return cart != null ? ResponseEntity.ok(cart) : ResponseEntity.notFound().build();
+        return ResponseEntity.ok(cart); 
     }
 
-    @PutMapping
+    @PutMapping("/update")
     public ResponseEntity<Cart> update(@RequestBody Cart cart) {
-        Cart updatedCart = cartService.update(cart);
-        return updatedCart != null ? ResponseEntity.ok(updatedCart) : ResponseEntity.notFound().build();
+        Cart updated = cartService.update(cart);
+        return ResponseEntity.ok(updated); 
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        return cartService.delete(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        cartService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping
+    @GetMapping("/getAll")
     public ResponseEntity<List<Cart>> getAll() {
         return ResponseEntity.ok(cartService.getAll());
     }
