@@ -15,7 +15,7 @@ const INITIAL_FORM_VALUES = {
   surname: '',
   email: '',
   phone: '',
-  password: '',
+  //password: '',
 };
 
 export default function StudentCreate() {
