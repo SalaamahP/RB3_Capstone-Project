@@ -25,11 +25,11 @@ public class CartRepositoryTest {
 
         Cart savedCart = cartRepository.save(cart);
         assertNotNull(savedCart);
-        assertEquals("user123", savedCart.getUserId());
+        assertTrue(savedCart.getCartId() > 0);
 
-        Cart foundCart = cartRepository.findById("user123").orElse(null);
+        Cart foundCart = cartRepository.findById(savedCart.getCartId()).orElse(null);
         assertNotNull(foundCart);
-        assertEquals("user123", foundCart.getUserId());
+        assertEquals(savedCart.getCartId(), foundCart.getCartId());
     }
 
     @Test
@@ -40,9 +40,9 @@ public class CartRepositoryTest {
                 .setBookingDate(LocalDateTime.now())
                 .build();
 
-        cartRepository.save(cart);
-        cartRepository.deleteById("user123");
+        Cart savedCart = cartRepository.save(cart);
+        cartRepository.deleteById(savedCart.getCartId());
 
-        assertFalse(cartRepository.existsById("user123"));
+        assertFalse(cartRepository.existsById(savedCart.getCartId()));
     }
 }
