@@ -118,7 +118,7 @@ function StudentForm(props) {
               value={formValues.studentNumber ?? ''}
               onChange={handleTextFieldChange}
               name="studentNumber"
-              label="Student NUmber"
+              label="Student Number"
               error={!!formErrors.studentNumber}
               helperText={formErrors.studentNumber ?? ' '}
               fullWidth
@@ -169,18 +169,7 @@ function StudentForm(props) {
             />
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
-            <TextField
-            type="password"
-              value={formValues.phone ?? ''}
-              onChange={handleTextFieldChange}
-              name="password"
-              label="Phone"
-              error={!!formErrors.password}
-              helperText={formErrors.password ?? ' '}
-              fullWidth
-            />
-          </Grid>
+ 
 
           {/* <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <FormControl error={!!formErrors.role} fullWidth>
@@ -251,7 +240,7 @@ StudentForm.propTypes = {
       surname: PropTypes.string,
       email: PropTypes.string,
       phone: PropTypes.string,
-      password: PropTypes.string,
+     // password: PropTypes.string,
     }).isRequired,
     values: PropTypes.shape({
       studentNumber: PropTypes.string,
@@ -259,7 +248,7 @@ StudentForm.propTypes = {
       surname: PropTypes.string,
       email: PropTypes.string,
       phone: PropTypes.string,
-      password: PropTypes.string,
+  //    password: PropTypes.string,
       //role: PropTypes.oneOf(['Development', 'Finance', 'Market']),
     }).isRequired,
   }).isRequired,

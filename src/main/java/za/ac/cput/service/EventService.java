@@ -11,8 +11,8 @@ import java.util.List;
 
 public interface EventService {
     Event create(Event event);
-    Event read(String id);
+    Event read(long id);
     Event update(Event event);
-    boolean delete(String id);
+    boolean delete(long id);
     List<Event> getAll();
 }

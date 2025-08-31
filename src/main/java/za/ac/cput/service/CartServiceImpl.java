@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import za.ac.cput.domain.Cart;
 import za.ac.cput.repository.CartRepository;
-import za.ac.cput.service.CartService;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,21 +24,21 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart read(String id) {
+    public Cart read(Long id) {
         Optional<Cart> cart = cartRepository.findById(id);
         return cart.orElse(null);
     }
 
     @Override
     public Cart update(Cart cart) {
-        if (cartRepository.existsById(cart.getUserId())) {
+        if (cartRepository.existsById(cart.getCartId())) {
             return cartRepository.save(cart);
         }
         return null;
     }
 
     @Override
-    public boolean delete(String id) {
+    public boolean delete(Long id) {
         if (cartRepository.existsById(id)) {
             cartRepository.deleteById(id);
             return true;
@@ -49,6 +48,6 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public List<Cart> getAll() {
-        return List.of();
+        return cartRepository.findAll();
     }
 }

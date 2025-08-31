@@ -1,121 +1,102 @@
 package za.ac.cput.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.ResponseEntity;
 import za.ac.cput.domain.Cart;
 import za.ac.cput.domain.Cart.PaymentOption;
-import za.ac.cput.service.CartService;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@WebMvcTest(CartController.class)
-public class CartControllerTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class CartControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private TestRestTemplate restTemplate;
 
-    @MockBean
-    private CartService cartService;
+    @LocalServerPort
+    private int port;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private String BASE_URL;
 
-    private Cart cart;
+    private static Cart cart;
 
     @BeforeEach
-    void setUp() {
+    void init() {
+        BASE_URL = "http://localhost:" + port + "/SEMS/cart";
+
+    }
+
+    @BeforeAll
+    static void setUp() {
         cart = new Cart.Builder()
-                .setUserId("123L")
+                .setUserId("user123")
                 .setPaymentOption(PaymentOption.CASH)
                 .setBookingDate(LocalDateTime.now())
                 .build();
     }
 
     @Test
-    void testCreateCart() throws Exception {
-        Mockito.when(cartService.create(any(Cart.class))).thenReturn(cart);
-
-        mockMvc.perform(post("/api/cart")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(cart)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userId").value(cart.getUserId()));
+    @Order(1)
+    void create() {
+        ResponseEntity<Cart> response = restTemplate.postForEntity(BASE_URL + "/create", cart, Cart.class);
+        assertNotNull(response.getBody());
+        cart = response.getBody();
+        assertTrue(cart.getCartId() > 0);
+        System.out.println("Created Cart ID: " + cart.getCartId());
     }
 
     @Test
-    void testReadCart() throws Exception {
-        Mockito.when(cartService.read("123L")).thenReturn(cart);
-
-        mockMvc.perform(get("/api/cart/123L"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userId").value(cart.getUserId()));
+    @Order(2)
+    void read() {
+        ResponseEntity<Cart> response = restTemplate.getForEntity(BASE_URL + "/read/" + cart.getCartId(), Cart.class);
+        assertNotNull(response.getBody());
+        assertEquals(cart.getCartId(), response.getBody().getCartId());
+        System.out.println("Read Cart ID: " + response.getBody().getCartId());
     }
 
     @Test
-    void testReadCartNotFound() throws Exception {
-        Mockito.when(cartService.read("999L")).thenReturn(null);
+    @Order(3)
+    void update() {
+        Cart updatedCart = new Cart.Builder()
+                .copy(cart)
+                .setPaymentOption(PaymentOption.CASH)
+                .build();
 
-        mockMvc.perform(get("/api/cart/999L"))
-                .andExpect(status().isNotFound());
+        restTemplate.put(BASE_URL + "/update", updatedCart);
+
+        ResponseEntity<Cart> response = restTemplate.getForEntity(BASE_URL + "/read/" + cart.getCartId(), Cart.class);
+        assertNotNull(response.getBody());
+        assertEquals(PaymentOption.CASH, response.getBody().getPaymentOption());
+        System.out.println("Updated Cart ID: " + response.getBody().getCartId());
+        cart = response.getBody();
     }
 
     @Test
-    void testUpdateCart() throws Exception {
-        Mockito.when(cartService.update(any(Cart.class))).thenReturn(cart);
-
-        mockMvc.perform(put("/api/cart")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(cart)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userId").value(cart.getUserId()));
+    @Order(4)
+    void getAll() {
+        ResponseEntity<Cart[]> response = restTemplate.getForEntity(BASE_URL + "/getAll", Cart[].class);
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().length > 0);
+        System.out.println("All Carts:");
+        for (Cart c : response.getBody()) {
+            System.out.println(c);
+        }
     }
 
     @Test
-    void testUpdateCartNotFound() throws Exception {
-        Mockito.when(cartService.update(any(Cart.class))).thenReturn(null);
+    @Order(5)
+    void delete() {
+        restTemplate.delete(BASE_URL + "/delete/" + cart.getCartId());
 
-        mockMvc.perform(put("/api/cart")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(cart)))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void testDeleteCart() throws Exception {
-        Mockito.when(cartService.delete("123L")).thenReturn(true);
-
-        mockMvc.perform(delete("/api/cart/123L"))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
-    void testDeleteCartNotFound() throws Exception {
-        Mockito.when(cartService.delete("999L")).thenReturn(false);
-
-        mockMvc.perform(delete("/api/cart/999L"))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void testGetAllCarts() throws Exception {
-        Mockito.when(cartService.getAll()).thenReturn(Arrays.asList(cart));
-
-        mockMvc.perform(get("/api/cart"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].userId").value(cart.getUserId()));
+        ResponseEntity<Cart> response = restTemplate.getForEntity(BASE_URL + "/read/" + cart.getCartId(), Cart.class);
+        assertNull(response.getBody());
+        System.out.println("Deleted Cart ID: " + cart.getCartId());
     }
 }

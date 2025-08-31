@@ -8,18 +8,18 @@ import za.ac.cput.util.Helper;
 import za.ac.cput.domain.Admin;
 import za.ac.cput.domain.Admin.AdminRole;
 
-import java.util.Random;
+//import java.util.Random;
 
 public class AdminFactory {
     public static Admin createAdmin(String password, String name, String surname, String phone, String email, AdminRole adminRole ) {
-        Long id = new Random().nextLong();
+        //Long id = new Random().nextLong();
         if(Helper.isNullOrEmpty(password)){
-            return null;}
+            throw new IllegalArgumentException("Password cannot be null or empty");}
         if(Helper.isNullOrEmpty(name)){
-            return null;
+            throw new IllegalArgumentException("Name cannot be null or empty");
         }
         if(Helper.isNullOrEmpty(surname)){
-            return null;
+            throw new IllegalArgumentException("Surname cannot be null or empty");
         }
         if(!Helper.isValidPhone(phone)){
             throw new IllegalArgumentException("Phone number is invalid");
@@ -32,7 +32,6 @@ public class AdminFactory {
         }
 
         return new Admin.Builder()
-                .id(id)
                 .setPassword(password)
                 .setName(name)
                 .setSurname(surname)

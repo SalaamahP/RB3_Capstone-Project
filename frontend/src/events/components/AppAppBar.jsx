@@ -13,6 +13,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ColorModeIconDropdown from '../../shared-theme/ColorModeIconDropdown';
 import Sitemark from './SitemarkIcon';
+import {Link} from 'react-router-dom';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -53,17 +54,17 @@ export default function AppAppBar() {
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
             <Sitemark />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" color="info" size="small">
-                Features
+              <Button component={Link} to="/user/student" variant="text" color="info" size="small">
+                Students
               </Button>
               <Button variant="text" color="info" size="small">
-                Testimonials
+                Organizer
+              </Button>
+              <Button component={Link} to="/venue" variant="text" color="info" size="small">
+                Venues
               </Button>
               <Button variant="text" color="info" size="small">
-                Highlights
-              </Button>
-              <Button variant="text" color="info" size="small">
-                Pricing
+                Admin
               </Button>
               <Button variant="text" color="info" size="small" sx={{ minWidth: 0 }}>
                 FAQ
@@ -114,10 +115,10 @@ export default function AppAppBar() {
                     <CloseRoundedIcon />
                   </IconButton>
                 </Box>
-                <MenuItem>Features</MenuItem>
-                <MenuItem>Testimonials</MenuItem>
-                <MenuItem>Highlights</MenuItem>
-                <MenuItem>Pricing</MenuItem>
+                <MenuItem>Students</MenuItem>
+                <MenuItem>Organizer</MenuItem>
+                <MenuItem>Venues</MenuItem>
+                <MenuItem>Admin</MenuItem>
                 <MenuItem>FAQ</MenuItem>
                 <MenuItem>Events</MenuItem>
                 <Divider sx={{ my: 3 }} />

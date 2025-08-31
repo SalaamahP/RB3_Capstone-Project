@@ -6,129 +6,111 @@
 package za.ac.cput.controller;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-//import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import za.ac.cput.domain.Admin;
-import za.ac.cput.domain.Admin.AdminRole;
-import za.ac.cput.repository.AdminRepository;
-import za.ac.cput.service.AdminService;
+import za.ac.cput.factory.AdminFactory;
+
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
-
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-@WebMvcTest(AdminController.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AdminControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
-
-    private final AdminService adminService = mock(AdminService.class);
+    private static Admin admin;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    TestRestTemplate restTemplate;
 
-    private Admin admin;
-    @Autowired
-    private AdminRepository adminRepository;
+    @LocalServerPort
+    private int port;
+    private String BASE_URL; //= 8080/SEMS/admin";
 
     @BeforeEach
-    public void setUp() {
-        admin = new Admin.Builder()
-                .setName("Mia")
-                .setSurname("Kings")
-                .setPhone("0809654127")
-                .setEmail("kings@gmail.com")
-                .setPassword("password123")
-                .setAdminRole(AdminRole.SYSTEM_ADMIN)
+    void init() {
+        BASE_URL = "http://localhost:" + port + "/SEMS/admin";
+    }
+
+    @BeforeAll
+    public static void setUp() {
+        admin = AdminFactory.createAdmin("Pass3990", "Lebogang", "Mooki", "0809654127", "lebogang@gmail.com", Admin.AdminRole.ADMIN);
+
+    }
+
+    @Test
+    @Order(1)
+    void create() {
+        String url = BASE_URL + "/create";
+        ResponseEntity<Admin> postResponse = restTemplate.postForEntity(url, admin, Admin.class);
+        assertNotNull(postResponse.getBody());
+
+        admin = postResponse.getBody();
+        assertEquals("Lebogang", admin.getName());
+        System.out.println("Created: " + admin.getName());
+
+    }
+
+    @Test
+    @Order(2)
+    void read() {
+        String url = BASE_URL + "/read/" + admin.getId();
+        ResponseEntity<Admin> response = restTemplate.getForEntity(url, Admin.class);
+        assertEquals(admin.getId(), Objects.requireNonNull(response.getBody()).getId());
+        System.out.println("Read: " + admin.getId());
+    }
+
+    @Test
+    @Order(3)
+    void update() {
+        assertNotNull(admin.getId());
+        Admin updatedAdmin = new Admin.Builder()
+                .copy(admin)
+                .setName("Karabo")
                 .build();
 
+        String url = BASE_URL + "/update";
+        this.restTemplate.put(url, updatedAdmin);
+
+        //Verify update by reading updated
+        ResponseEntity<Admin> response = this.restTemplate.getForEntity(BASE_URL + "/read/" + admin.getId(), Admin.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(updatedAdmin.getName(), response.getBody().getName());
+        System.out.println("Updated Admin Name: " + response.getBody());
+
+        admin = response.getBody();
     }
 
     @Test
-    void testSaveAdmin() throws Exception {
-        when(adminService.create(any(Admin.class))).thenReturn(admin);
-
-        mockMvc.perform(post("/api/admin/save")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(admin)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(admin.getName()))
-                .andExpect(jsonPath("$.surname").value(admin.getSurname()))
-                .andExpect(jsonPath("$.phone").value(admin.getPhone()))
-                .andExpect(jsonPath("$.email").value(admin.getEmail()))
-                .andExpect(jsonPath("$.adminRole").value(admin.getAdminRole().toString()));
+    @Order(4)
+    void getAll() {
+        String url = BASE_URL + "/all";
+        ResponseEntity<Admin[]> response = restTemplate.getForEntity(url, Admin[].class);
+        assertNotNull(response.getBody());
+        System.out.println("Get All: ");
+        for (Admin admin : response.getBody()) {
+            System.out.println(admin);
+        }
     }
 
     @Test
-    void testCreateAdmin() throws Exception {
-        when(adminService.create(any(Admin.class))).thenReturn(admin);
+    @Order(5)
+    void delete() {
+        String url = BASE_URL + "/delete/" + admin.getId();
+        this.restTemplate.delete(url);
 
-        mockMvc.perform(post("/api/admin/create")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(admin)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.AdminId").value(admin.getId()));
-    }
-
-    @Test
-    void testReadAdmin() throws Exception {
-        when(adminService.read(eq(admin.getId()))).thenReturn(admin);
-
-        mockMvc.perform(get("/api/admin/read/" + admin.getId()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(admin.getName()))
-                .andExpect(jsonPath("$.surname").value(admin.getSurname()))
-                .andExpect(jsonPath("$.phone").value(admin.getPhone()))
-                .andExpect(jsonPath("$.email").value(admin.getEmail()))
-                .andExpect(jsonPath("$.adminRole").value(admin.getAdminRole().toString()));
-
-    }
-
-    @Test
-    void testUpdateAdmin() throws Exception {
-        when(adminService.update(any(Admin.class))).thenReturn(admin);
-
-        mockMvc.perform(put("/api/admin/update")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(admin)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.AdminId").value(admin.getId()));
-    }
-
-    @Test
-    void testDeleteAdmin() throws Exception {
-        doNothing().when(adminService).delete(eq(admin.getId()));
-
-        mockMvc.perform(delete("/api/admin/delete/" + admin.getId()))
-                .andExpect(status().isNoContent());
-
-        verify(adminService, times(1)).delete(eq(admin.getId()));
-    }
-
-    @Test
-    void testGetAllAdmins() throws Exception {
-        List<Admin> admins = List.of(admin);
-        when(adminService.getAll()).thenReturn(admins);
-
-        mockMvc.perform(get("/api/admin/all"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value(admin.getName()))
-                .andExpect(jsonPath("$[0].surname").value(admin.getSurname()))
-                .andExpect(jsonPath("$[0].phone").value(admin.getPhone()))
-                .andExpect(jsonPath("$[0].email").value(admin.getEmail()))
-                .andExpect(jsonPath("$[0].adminRole").value(admin.getAdminRole().toString()));
+        //Verify admin was deleted
+        ResponseEntity<Admin> response = this.restTemplate.getForEntity(BASE_URL + "/read/" + admin.getId(), Admin.class);
+        assertNull(response.getBody());
+        System.out.println("Deleted: " + admin.getId());
     }
 
 }

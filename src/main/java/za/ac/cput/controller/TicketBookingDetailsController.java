@@ -10,7 +10,7 @@ import za.ac.cput.service.TicketBookingDetailsService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/ticket-bookings")
+@RequestMapping("/bookings")
 public class TicketBookingDetailsController {
 
     private final TicketBookingDetailsService service;
@@ -19,29 +19,34 @@ public class TicketBookingDetailsController {
         this.service = service;
     }
 
+    // Create
     @PostMapping
-    public ResponseEntity<TicketBookingDetails> create(@RequestBody TicketBookingDetails details) {
-        return ResponseEntity.ok(service.create(details));
+    public ResponseEntity<TicketBookingDetails> create(@RequestBody TicketBookingDetails booking) {
+        return ResponseEntity.ok(service.save(booking));
     }
 
+    // Read by ID
     @GetMapping("/{id}")
     public ResponseEntity<TicketBookingDetails> read(@PathVariable String id) {
-        TicketBookingDetails details = service.read(id);
-        return details != null ? ResponseEntity.ok(details) : ResponseEntity.notFound().build();
+        TicketBookingDetails booking = service.read(id);
+        if (booking != null) {
+            return ResponseEntity.ok(booking);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @PutMapping
-    public ResponseEntity<TicketBookingDetails> update(@RequestBody TicketBookingDetails details) {
-        return ResponseEntity.ok(service.update(details));
+    // Read all
+    @GetMapping
+    public List<TicketBookingDetails> getAll() {
+        return service.getAll();
     }
 
+    // Delete by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
-        return service.delete(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<List<TicketBookingDetails>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
+

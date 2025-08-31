@@ -2,10 +2,11 @@
 //[date] 25/05/2025
 package za.ac.cput.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import za.ac.cput.domain.Notification;
 import za.ac.cput.domain.TicketBookingDetails;
 import za.ac.cput.repository.TicketBookingDetailsRepository;
-import za.ac.cput.service.TicketBookingDetailsService;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,7 @@ public class TicketBookingDetailsServiceImpl implements TicketBookingDetailsServ
 
     private final TicketBookingDetailsRepository repository;
 
+    @Autowired
     public TicketBookingDetailsServiceImpl(TicketBookingDetailsRepository repository) {
         this.repository = repository;
     }
@@ -25,23 +27,23 @@ public class TicketBookingDetailsServiceImpl implements TicketBookingDetailsServ
     }
 
     @Override
-    public TicketBookingDetails read(String bookingId) {
-        Optional<TicketBookingDetails> details = repository.findById(bookingId);
+    public TicketBookingDetails read(String id) {
+        Optional<TicketBookingDetails> details = repository.findById(id);
         return details.orElse(null);
     }
 
     @Override
     public TicketBookingDetails update(TicketBookingDetails details) {
-        if (repository.existsById(details.getBookingId())) {
+        if (repository.existsById(details.getBookingID())) {
             return repository.save(details);
         }
         return null;
     }
 
     @Override
-    public boolean delete(String bookingId) {
-        if (repository.existsById(bookingId)) {
-            repository.deleteById(bookingId);
+    public boolean delete(String id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
             return true;
         }
         return false;
@@ -50,5 +52,10 @@ public class TicketBookingDetailsServiceImpl implements TicketBookingDetailsServ
     @Override
     public List<TicketBookingDetails> getAll() {
         return repository.findAll();
+    }
+
+    @Override
+    public TicketBookingDetails save(TicketBookingDetails details) {
+        return repository.save(details);
     }
 }

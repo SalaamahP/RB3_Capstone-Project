@@ -9,48 +9,86 @@ package za.ac.cput.factory;
 import org.junit.jupiter.api.Test;
 import za.ac.cput.domain.Event;
 import za.ac.cput.domain.Event.EventCategory;
+import za.ac.cput.domain.Venue;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class EventFactoryTest {
-// Test case to verify the successful creation of an Event object
+class EventFactoryTest {
+
     @Test
     void testCreateEventSuccess() {
-        Event event = EventFactory.createEvent("Concert", "Music event", EventCategory.SPORT,
-                LocalDateTime.now(), 1L, 123L, 500.0);
+        Venue venue = new Venue.Builder().setVenueId(1L).setVenueName("Main Hall").build();
+
+        Event event = EventFactory.createEvent(
+                "Concert",
+                "Music event",
+                EventCategory.SPORT,
+                LocalDateTime.now(),
+                venue,
+                123L,
+                500.0
+        );
+
         assertNotNull(event);
         assertEquals("Concert", event.getEventName());
         assertEquals("Music event", event.getEventDescription());
         assertEquals(EventCategory.SPORT, event.getEventCategory());
         assertNotNull(event.getDateTime());
-        assertEquals(1L, event.getVenueId());
+        assertEquals(venue, event.getVenue());
         assertEquals(123L, event.getUserId());
         assertEquals(500.0, event.getTicketPrice());
     }
-// Test case to verify the exception thrown when an invalid event name is provided
+
     @Test
     void testCreateEventWithInvalidName() {
+        Venue venue = new Venue.Builder().setVenueId(1L).setVenueName("Main Hall").build();
+
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                EventFactory.createEvent("", "Music event", EventCategory.SPORT,
-                        LocalDateTime.now(), 1L, 123L, 500.0));
+                EventFactory.createEvent(
+                        "",
+                        "Music event",
+                        EventCategory.SPORT,
+                        LocalDateTime.now(),
+                        venue,
+                        123L,
+                        500.0
+                ));
         assertEquals("Event name is required", exception.getMessage());
     }
-// Test case to verify the exception thrown when an invalid event category is provided
+
     @Test
     void testCreateEventWithNullCategory() {
+        Venue venue = new Venue.Builder().setVenueId(1L).setVenueName("Main Hall").build();
+
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                EventFactory.createEvent("Concert", "Music event", null,
-                        LocalDateTime.now(), 1L, 123L, 500.0));
+                EventFactory.createEvent(
+                        "Concert",
+                        "Music event",
+                        null,
+                        LocalDateTime.now(),
+                        venue,
+                        123L,
+                        500.0
+                ));
         assertEquals("Event category is required", exception.getMessage());
     }
-// Test case to verify the exception thrown when ticket price is negative
+
     @Test
     void testCreateEventWithNegativeTicketPrice() {
+        Venue venue = new Venue.Builder().setVenueId(1L).setVenueName("Main Hall").build();
+
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                EventFactory.createEvent("Concert", "Music event", EventCategory.SPORT,
-                        LocalDateTime.now(), 1L, 123L, -100.0));
+                EventFactory.createEvent(
+                        "Concert",
+                        "Music event",
+                        EventCategory.SPORT,
+                        LocalDateTime.now(),
+                        venue,
+                        123L,
+                        -10.0
+                ));
         assertEquals("Ticket price cannot be negative", exception.getMessage());
     }
 }

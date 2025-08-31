@@ -10,7 +10,7 @@ import za.ac.cput.service.NotificationService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/notifications")
+@RequestMapping("/notifications")
 public class NotificationController {
 
     private final NotificationService service;
@@ -20,28 +20,25 @@ public class NotificationController {
     }
 
     @PostMapping
-    public ResponseEntity<Notification> create(@RequestBody Notification notification) {
-        return ResponseEntity.ok(service.create(notification));
+    public ResponseEntity<Notification> create(@RequestBody Notification n) {
+        return ResponseEntity.ok(service.save(n));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Notification> read(@PathVariable String id) {
-        Notification notification = service.read(id);
-        return notification != null ? ResponseEntity.ok(notification) : ResponseEntity.notFound().build();
+        return service.read(id)   // Optional<Notification>
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping
-    public ResponseEntity<Notification> update(@RequestBody Notification notification) {
-        return ResponseEntity.ok(service.update(notification));
+    @GetMapping
+    public List<Notification> getAll() {
+        return service.getAll();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
-        return service.delete(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Notification>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

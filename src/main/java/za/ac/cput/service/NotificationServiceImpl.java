@@ -2,19 +2,23 @@
 //[date] 25/05/2025
 package za.ac.cput.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import za.ac.cput.domain.Notification;
 import za.ac.cput.repository.NotificationRepository;
-import za.ac.cput.service.NotificationService;
 
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service implementation for Notification.
+ */
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository repository;
 
+    @Autowired
     public NotificationServiceImpl(NotificationRepository repository) {
         this.repository = repository;
     }
@@ -25,9 +29,10 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Notification read(String id) {
-        return repository.findById(id).orElse(null);
+    public Optional<Notification> read(String id) {
+        return repository.findById(id);  // JPA returns Optional
     }
+
 
     @Override
     public Notification update(Notification notification) {
@@ -49,5 +54,10 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<Notification> getAll() {
         return repository.findAll();
+    }
+
+    @Override
+    public Notification save(Notification notification) {
+        return repository.save(notification);
     }
 }
