@@ -1,97 +1,74 @@
 package za.ac.cput.service;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import za.ac.cput.domain.Admin;
 import za.ac.cput.domain.Admin.AdminRole;
-import za.ac.cput.repository.AdminRepository;
+import za.ac.cput.factory.AdminFactory;
 
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+@SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 
 public class AdminServiceTest {
 
-    @Mock
-    private AdminRepository adminRepository;
+    @Autowired
+    private AdminService adminService;
 
-    @InjectMocks
-    private AdminServiceImpl adminService;
-    private Admin admin;
+    private static Admin admin;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        admin = new Admin.Builder()
-                .setName("Thomas")
-                .setSurname("Koe")
-                .setPhone("0877752601")
-                .setEmail("koe@gmail.com")
-                .setPassword("k12Admin77")
-                .setAdminRole(AdminRole.SYSTEM_ADMIN)
-                .build();
-        adminRepository.save(admin);
-        System.out.println(admin.getId());
+    @BeforeAll
+    static void setUp() {
+        admin = AdminFactory.createAdmin(
+                "k13/admin", "John", "Maputla", "0714567890", "maputla@gmail.com", AdminRole.ADMIN);
     }
 
     @Test
-    void testCreateAdmin() {
-        when(adminRepository.save(any(Admin.class))).thenAnswer(invocation -> {
-            Admin savedAdmin = invocation.getArgument(0);
-            savedAdmin = new Admin.Builder().copy(savedAdmin).id(1L).build(); // Simulating the ID
-            return savedAdmin;
-        });
-
-        Admin createdAdmin = adminService.create(admin);
-        assertNotNull(createdAdmin);
-        assertEquals(AdminRole.SYSTEM_ADMIN, createdAdmin.getAdminRole());
-    }
-    @Test
-    void testReadAdmin() {
-        when(adminRepository.findById(anyLong())).thenReturn(Optional.of(admin));
-        Admin foundAdmin = adminService.read(1L);
-        assertNotNull(foundAdmin);
-        assertEquals(AdminRole.SYSTEM_ADMIN, foundAdmin.getAdminRole());
+    @Order(1)
+    void add() {
+        Admin addAdmin = adminService.create(admin);
+        assertNotNull(addAdmin.getId());
+        assertEquals("John", addAdmin.getName());
+        admin = addAdmin;
     }
 
     @Test
-    void testUpdateAdminRole() {
-        Admin updatedAdmin = new Admin.Builder()
+    @Order(2)
+    void read() {
+        Admin readAdmin = adminService.read(admin.getId());
+        assertNotNull(readAdmin);
+        assertEquals(admin.getEmail(), readAdmin.getEmail());
+    }
+
+    @Test
+    @Order(3)
+    void update() {
+        Admin updateAdmin = new Admin.Builder()
                 .copy(admin)
-                .setAdminRole(AdminRole.STAFF) // Change role
+                .setName("Thomas")
                 .build();
-
-        when(adminRepository.existsById(anyLong())).thenReturn(true);
-        when(adminRepository.save(any(Admin.class))).thenReturn(updatedAdmin);
-
-        Admin result = adminService.update(updatedAdmin);
-        assertNotNull(result);
-        assertEquals(AdminRole.STAFF, result.getAdminRole()); // Ensure role update
+        Admin updated = adminService.update(updateAdmin);
+        assertEquals("Thomas", updated.getName());
     }
 
     @Test
-    void testDeleteAdmin() {
-        when(adminRepository.existsById(anyLong())).thenReturn(true);
-        doNothing().when(adminRepository).deleteById(anyLong());
-
-        boolean isDeleted = adminService.delete(1L);
-        assertEquals(true, isDeleted);
-        verify(adminRepository, times(1)).deleteById(1L);
+    @Order(5)
+    void delete() {
+        boolean success = adminService.delete(admin.getId());
+        assertTrue(success);
+        assertNull(adminService.read(admin.getId()));
     }
 
     @Test
-    void testGetAllAdmins() {
-        when(adminRepository.findAll()).thenReturn(List.of(admin));
-
-        List<Admin> admins = adminService.getAll();
-        assertNotNull(admins);
-        assertEquals(1, admins.size());
+    @Order(4)
+    void getAll() {
+        List<Admin> adminList = adminService.getAll();
+        assertNotNull(adminList);
+        //System.out.println("All Admins: " + adminList);
     }
+
 
 }

@@ -1,5 +1,6 @@
 package za.ac.cput.controller;
 
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/organizer")
+@CrossOrigin(origins = "http://localhost:5173")
 public class OrganizerController {
     private final OrganizerService organizerService;
 
@@ -20,36 +22,31 @@ public class OrganizerController {
 
     // Endpoint to create a new organizer
     @PostMapping("/create")
-    public ResponseEntity<Organizer> createOrganizer(@RequestBody Organizer organizer) {
-        Organizer createdOrganizer = organizerService.create(organizer);
-        return ResponseEntity.ok(createdOrganizer);
+    public Organizer create(@RequestBody Organizer organizer) {
+        return organizerService.create(organizer);
     }
 
     // Endpoint to read an organizer by ID
     @GetMapping("/read/{id}")
-    public ResponseEntity<Organizer> readOrganizer(@PathVariable Long id) {
-        Organizer organizer = organizerService.read(id);
-        return ResponseEntity.ok(organizer);
+    public Organizer read(@PathVariable Long id) {
+        return organizerService.read(id);
     }
 
-    // Endpoint to update an existing organizer
+    // Endpoint to update an organizer
     @PutMapping("/update")
-    public ResponseEntity<Organizer> updateOrganizer(@RequestBody Organizer organizer) {
-        Organizer updatedOrganizer = organizerService.update(organizer);
-        return ResponseEntity.ok(updatedOrganizer);
+    public Organizer update(@RequestBody Organizer organizer) {
+        return organizerService.update(organizer);
     }
 
     // Endpoint to delete an organizer by ID
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteOrganizer(@PathVariable Long id) {
-        boolean deleted = organizerService.delete(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    public boolean delete(@PathVariable Long id) {
+        return organizerService.delete(id);
     }
 
     // Endpoint to get all organizers
     @GetMapping("/getall")
-    public ResponseEntity<List<Organizer>> getAllOrganizers() {
-        List<Organizer> organizers = organizerService.getAll();
-        return ResponseEntity.ok(organizers);
+    public List<Organizer> getAll() {
+        return organizerService.getAll();
     }
 }
