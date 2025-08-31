@@ -3,7 +3,7 @@ import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
 import React from "react";
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, Navigate } from "react-router-dom"
 import SignUp from "./sign-up/SignUp";
 import SignInSide from "./sign-in-side/SignInSide";
 import Checkout from "./checkout/Checkout";
@@ -35,6 +35,7 @@ function App() {
         
 
 <Routes>
+  <Route path="/" element={<Navigate to="/events"/>}/>
 
   <Route path="/sign-in-side" element={<SignInSide/>}/>
   <Route path="/sign-up" element={<SignUp/>}/>
