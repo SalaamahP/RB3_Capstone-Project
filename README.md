@@ -1,7 +1,9 @@
-![UML_RB3 drawio](https://github.com/user-attachments/assets/07e21c99-8c32-45c4-becf-2dce6874f4f4)
-# Capstone Project – SEMS
+<img width="1331" height="1048" alt="image" src="https://github.com/user-attachments/assets/6ac54181-7ef1-4efa-87bf-67870416dbac" />
 
-This project is a **full-stack web application** built with:
+# Capstone Project 
+Student Event Management System -SEMS
+
+This project is a **web application** built with:
 - **Backend:** Java Spring Boot (RESTful APIs, MySQL database)
 - **Frontend:** React + Material UI (user interface)
 - **Build tools:** Maven (backend), npm/yarn (frontend)
