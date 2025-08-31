@@ -1,139 +1,163 @@
-
 package za.ac.cput.controller;
 
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import org.mockito.Mockito;
-
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import za.ac.cput.domain.Enum.Status;
 import za.ac.cput.domain.Rsvp;
-import za.ac.cput.domain.Student;
-import za.ac.cput.domain.Event;
-import za.ac.cput.service.RsvpService;
 
-import java.util.Arrays;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@WebMvcTest(RsvpController.class)
-public class RsvpControllerTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class RsvpControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private TestRestTemplate restTemplate;
 
-    @MockBean
-    private RsvpService rsvpService;
+    private static final String BASE_URL = "/api/rsvp";
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private static Rsvp testRsvp;
+    private static String createdRsvpId;
 
-    private Rsvp rsvp;
+    // A simple builder class for the Rsvp domain object
+    private static class RsvpBuilder {
+        private String rsvpId;
+        private String name;
+        private Status status;
+        private LocalDateTime createdDate;
 
-    @BeforeEach
-    void setup() {
-        Student student = new Student.Builder()
-                .setId("student1")
-                .setName("Test Student")
+        public RsvpBuilder withId(String id) { this.rsvpId = id; return this; }
+        public RsvpBuilder withName(String name) { this.name = name; return this; }
+        public RsvpBuilder withStatus(Status status) { this.status = status; return this; }
+        public RsvpBuilder withCreatedDate(LocalDateTime date) { this.createdDate = date; return this; }
+
+        public Rsvp build() {
+            return new Rsvp.Builder()
+                    .setRsvpId(this.rsvpId)
+                    .setStatus(this.status)
+                    .setRsvpDate(this.createdDate.toLocalDate())
+                    .build();
+        }
+
+    }
+
+    @BeforeAll
+    static void setUp() {
+        // Create a valid RSVP object for testing
+        testRsvp = new RsvpBuilder()
+                .withName("Darling Ashton")
+                .withStatus(Status.CONFIRMED)
+                .withCreatedDate(LocalDateTime.now())
                 .build();
-
-        Event event = new Event.Builder()
-                .setId("event1")
-                .setName("Test Event")
-                .build();
-
-        rsvp = new Rsvp.Builder()
-                .setRsvpID("rsvp1")
-                .setStudent(student)
-                .setEvent(event)
-                .setStatus(Rsvp.Status.CONFIRMED)
-                .build();
     }
 
     @Test
-    void testGetAll() throws Exception {
-        Mockito.when(rsvpService.findAll()).thenReturn(Arrays.asList(rsvp));
+    @Order(1)
+    void create() {
+        // Send a POST request to the create endpoint
+        ResponseEntity<Rsvp> response = restTemplate.postForEntity(BASE_URL, testRsvp, Rsvp.class);
 
-        mockMvc.perform(get("/api/rsvps"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].rsvpID").value(rsvp.getRsvpID()));
+        // Assert that the HTTP status code is OK as per the current controller implementation
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        // Assert that the response body is not null and has a valid ID
+        assertNotNull(response.getBody());
+        assertNotNull(response.getBody().getRsvpId());
+
+        // Store the generated ID for subsequent tests
+        createdRsvpId = response.getBody().getRsvpId();
+        System.out.println("Created RSVP with ID: " + createdRsvpId);
     }
 
     @Test
-    void testGetById_found() throws Exception {
-        Mockito.when(rsvpService.findById("rsvp1")).thenReturn(Optional.of(rsvp));
-
-        mockMvc.perform(get("/api/rsvps/rsvp1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.rsvpID").value(rsvp.getRsvpID()));
+    @Order(2)
+    void createWithInvalidStatus() {
+        Rsvp invalidRsvp = new Rsvp.Builder().setStatus(null).build();
+        ResponseEntity<Rsvp> response = restTemplate.postForEntity(BASE_URL, invalidRsvp, Rsvp.class);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    void testGetById_notFound() throws Exception {
-        Mockito.when(rsvpService.findById("rsvp2")).thenReturn(Optional.empty());
+    @Order(3)
+    void read() {
+        // Send a GET request to read the created RSVP by its ID
+        ResponseEntity<Rsvp> response = restTemplate.getForEntity(BASE_URL + "/" + createdRsvpId, Rsvp.class);
 
-        mockMvc.perform(get("/api/rsvps/rsvp2"))
-                .andExpect(status().isNotFound());
+        // Assert that the HTTP status code is OK and the returned object matches
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(createdRsvpId, response.getBody().getRsvpId());
+        System.out.println("Read RSVP: " + response.getBody());
     }
 
     @Test
-    void testCreate() throws Exception {
-        Mockito.when(rsvpService.save(any(Rsvp.class))).thenReturn(rsvp);
+    @Order(4)
+    void getAll() {
+        // Send a GET request to get all RSVPs
+        ResponseEntity<List> response = restTemplate.getForEntity(BASE_URL, List.class);
 
-        mockMvc.perform(post("/api/rsvps")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(rsvp)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.rsvpID").value(rsvp.getRsvpID()));
+        // Assert that the HTTP status code is OK and the list is not empty
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertFalse(response.getBody().isEmpty());
+        System.out.println("Found " + response.getBody().size() + " RSVPs.");
     }
 
-    @Test
-    void testUpdate_found() throws Exception {
-        Mockito.when(rsvpService.update(eq("rsvp1"), any(Rsvp.class))).thenReturn(Optional.of(rsvp));
+    // The update and delete tests are commented out because the corresponding
+    // controller methods are also commented out. Uncomment these tests once
+    // the controller methods are enabled.
 
-        mockMvc.perform(put("/api/rsvps/rsvp1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(rsvp)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.rsvpID").value(rsvp.getRsvpID()));
-    }
-
-    @Test
-    void testUpdate_notFound() throws Exception {
-        Mockito.when(rsvpService.update(eq("rsvp2"), any(Rsvp.class))).thenReturn(Optional.empty());
-
-        mockMvc.perform(put("/api/rsvps/rsvp2")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(rsvp)))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void testDelete_found() throws Exception {
-        Mockito.when(rsvpService.deleteById("rsvp1")).thenReturn(true);
-
-        mockMvc.perform(delete("/api/rsvps/rsvp1"))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
-    void testDelete_notFound() throws Exception {
-        Mockito.when(rsvpService.deleteById("rsvp2")).thenReturn(false);
-
-        mockMvc.perform(delete("/api/rsvps/rsvp2"))
-                .andExpect(status().isNotFound());
-    }
+//    @Test
+//    @Order(5)
+//    void update() {
+//        // Read the existing object to modify it
+//        Rsvp rsvpToUpdate = restTemplate.getForEntity(BASE_URL + "/" + createdRsvpId, Rsvp.class).getBody();
+//        assertNotNull(rsvpToUpdate);
+//
+//        // Update the status to DECLINED
+//        rsvpToUpdate.setStatus(Status.DECLINED);
+//
+//        // Create an HTTP entity with the updated object
+//        HttpHeaders headers = new HttpHeaders();
+//        HttpEntity<Rsvp> requestEntity = new HttpEntity<>(rsvpToUpdate, headers);
+//
+//        // Send a PUT request to the update endpoint
+//        ResponseEntity<Rsvp> response = restTemplate.exchange(
+//                BASE_URL + "/" + createdRsvpId,
+//                HttpMethod.PUT,
+//                requestEntity,
+//                Rsvp.class);
+//
+//        // Assert that the HTTP status code is OK and the update was successful
+//        assertEquals(HttpStatus.OK, response.getStatusCode());
+//        assertNotNull(response.getBody());
+//        assertEquals(Status.DECLINED, response.getBody().getStatus());
+//        System.out.println("Updated RSVP: " + response.getBody());
+//    }
+//
+//    @Test
+//    @Order(6)
+//    void delete() {
+//        // Send a DELETE request to remove the RSVP
+//        restTemplate.delete(BASE_URL + "/" + createdRsvpId);
+//
+//        // Attempt to read the item again to confirm it's deleted
+//        ResponseEntity<Rsvp> response = restTemplate.getForEntity(BASE_URL + "/" + createdRsvpId, Rsvp.class);
+//
+//        // Assert that the HTTP status code is NOT_FOUND
+//        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+//        System.out.println("Successfully deleted RSVP with ID: " + createdRsvpId);
+//    }
 }

@@ -21,9 +21,9 @@ public class CartItem {
     private String productId;
     private int quantity;
 
-    @ManyToOne
-    @JoinColumn(name = "student_id")
-    private Student student;
+   // @ManyToOne
+  //  @JoinColumn(name = "student_id")
+ //   private Student student;
 
     public CartItem() {
         // Default constructor for JPA
@@ -33,11 +33,15 @@ public class CartItem {
         this.cartItemId = builder.cartItemId;
         this.productId = builder.productId;
         this.quantity = builder.quantity;
-        this.student = builder.student;
+    //    this.student = builder.student;
     }
 
     public String getCartItemId() {
         return cartItemId;
+    }
+
+    public void setCartItemId(String cartItemId) {
+        this.cartItemId = cartItemId;
     }
 
     public String getProductId() {
@@ -48,9 +52,9 @@ public class CartItem {
         return quantity;
     }
 
-    public Student getStudent() {
-        return student;
-    }
+//   // public Student getStudent() {
+//        return student;
+//    }
 
     @Override
     public String toString() {
@@ -58,15 +62,19 @@ public class CartItem {
                 "cartItemId='" + cartItemId + '\'' +
                 ", productId='" + productId + '\'' +
                 ", quantity=" + quantity +
-                ", student=" + student +
+           //     ", student=" + student +
                 '}';
+    }
+
+    public void setQuantity(int i) {
+        this.quantity = i;
     }
 
     public static class Builder {
         private String cartItemId;
         private String productId;
         private int quantity;
-        private Student student;
+    //    private Student student;
 
         public Builder setCartItemId(String cartItemId) {
             this.cartItemId = cartItemId;
@@ -83,13 +91,21 @@ public class CartItem {
             return this;
         }
 
-        public Builder setStudent(Student student) {
-            this.student = student;
-            return this;
-        }
+//        public Builder setStudent(Student student) {
+//            this.student = student;
+//            return this;
+//        }
 
         public CartItem build() {
             return new CartItem(this);
+        }
+
+        public Builder copy(CartItem cartItem) {
+            this.cartItemId = cartItem.cartItemId;
+            this.productId = cartItem.productId;
+            this.quantity = cartItem.quantity;
+        //    this.student = cartItem.student;
+            return this;
         }
     }
 }

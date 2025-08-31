@@ -1,112 +1,76 @@
-
-/*Rsvp.java
-Rsvp class
-Author: Patience Phakathi (222228431)
-Date: 11/05/2025
- */
-
 package za.ac.cput.domain;
 
-import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import jakarta.persistence.*;
-import java.util.Objects;
+import za.ac.cput.domain.Enum.Status;
+
+import java.time.LocalDate;
 
 @Entity
 public class Rsvp {
 
     @Id
-    private String rsvpID;
-
-
-    @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
-
-    @ManyToOne
-    @JoinColumn(name = "event_id", nullable = false)
-    private Event event;
+    private String rsvpId;
+    private LocalDate rsvpDate;
 
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    public enum Status {
-        CONFIRMED, PENDING, DECLINED
-    }
 
-    public Rsvp() {
-        // Default constructor for JPA
-    }
+    public Rsvp() {}
 
     private Rsvp(Builder builder) {
-        this.rsvpID = builder.rsvpID;
-        this.student = builder.student;
-        this.event = builder.event;
+        this.rsvpId = builder.rsvpId;
         this.status = builder.status;
+        this.rsvpDate = builder.rsvpDate;
     }
 
-    public String getRsvpID() {
-        return rsvpID;
-    }
+    // Getters
+    public String getRsvpId() { return rsvpId; }
+    public Status getStatus() { return status; }
+    public LocalDate getRsvpDate() { return rsvpDate; }
 
-
-    public Student getStudent() {
-        return student;
-    }
-
-    public Event getEvent() {
-        return event;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Rsvp)) return false;
-        Rsvp rsvp = (Rsvp) o;
-        return Objects.equals(rsvpID, rsvp.rsvpID);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(rsvpID);
-    }
+    // Setters
+    public void setRsvpId(String rsvpId) { this.rsvpId = rsvpId; }
+    public void setStatus(Status status) { this.status = status; }
+    public void setRsvpDate(LocalDate rsvpDate) { this.rsvpDate = rsvpDate; }
 
     @Override
     public String toString() {
         return "Rsvp{" +
-                "rsvpID='" + rsvpID + '\'' +
-                ", student=" + student +
-                ", event=" + event +
+                "rsvpId='" + rsvpId + '\'' +
+                ", rsvpDate=" + rsvpDate +
                 ", status=" + status +
                 '}';
     }
 
+    // Builder class
     public static class Builder {
-        private String rsvpID;
-        private Student student;
-        private Event event;
+        private String rsvpId;
         private Status status;
+        private LocalDate rsvpDate;
 
-        public Builder setRsvpID(String rsvpID) {
-            this.rsvpID = rsvpID;
+
+        public Builder setRsvpId(String rsvpId) {
+            this.rsvpId = rsvpId;
             return this;
         }
 
-        public Builder setStudent(Student student) {
-            this.student = student;
-            return this;
-        }
 
-        public Builder setEvent(Event event) {
-            this.event = event;
-            return this;
-        }
 
         public Builder setStatus(Status status) {
             this.status = status;
+            return this;
+        }
+
+        public Builder setRsvpDate(LocalDate rsvpDate) {
+            this.rsvpDate = rsvpDate;
+            return this;
+        }
+
+        public Builder copy(Rsvp rsvp) {
+            this.rsvpId = rsvp.rsvpId;
+            this.status = rsvp.status;
+            this.rsvpDate = rsvp.rsvpDate;
             return this;
         }
 
