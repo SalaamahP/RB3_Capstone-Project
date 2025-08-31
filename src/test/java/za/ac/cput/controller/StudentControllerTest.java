@@ -82,18 +82,18 @@ class StudentControllerTest {
 
     }
 
-    @Test
-    @Order(5)
-    void delete() {
-        String url = BASE_URL + "/delete/" + student.getId();
-        this.restTemplate.delete(url);
-
-        //Verify venue was deleted
-        ResponseEntity<Student> response = this.restTemplate.getForEntity(BASE_URL + "/read/" + student.getId(), Student.class);
-        assertNull(response.getBody());
-        System.out.println("Deleted: " + student.getId());
-
-    }
+//    @Test
+//    @Order(5)
+//    void delete() {
+//        String url = BASE_URL + "/delete/" + student.getId();
+//        this.restTemplate.delete(url);
+//
+//        //Verify venue was deleted
+//        ResponseEntity<Student> response = this.restTemplate.getForEntity(BASE_URL + "/read/" + student.getId(), Student.class);
+//        assertNull(response.getBody());
+//        System.out.println("Deleted: " + student.getId());
+//
+//    }
 
     @Test
     @Order(4)

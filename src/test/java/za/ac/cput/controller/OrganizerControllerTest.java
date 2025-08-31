@@ -6,105 +6,102 @@
 
 package za.ac.cput.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-//import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import za.ac.cput.domain.Organizer;
-import za.ac.cput.service.OrganizerService;
-import za.ac.cput.domain.Organizer.OrganizerType;
+import za.ac.cput.factory.OrganizerFactory;
 
-import java.util.List;
+import java.util.Objects;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-
-@WebMvcTest(OrganizerController.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OrganizerControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
-
-    private final OrganizerService organizerService = mock(OrganizerService.class);
+    private static Organizer organizer;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    TestRestTemplate restTemplate;
 
-    private Organizer organizer;
+    @LocalServerPort
+    private int port;
+    private String BASE_URL; //= 8080/SEMS/organizer";
 
     @BeforeEach
-    void setUp() {
-        organizer = new Organizer.Builder()
-                .setName("Poko")
-                .setSurname("Moeti")
-                .setPhone("0786523945")
-                .setEmail("poko@gmail.com")
-                .setOrganizerType(OrganizerType.CORPORATION)
-                .build();
+    void init() {
+        BASE_URL = "http://localhost:" + port + "/SEMS/organizer";
+    }
+
+    @BeforeAll
+    public static void setUp() {
+        organizer = OrganizerFactory.createOrganizer("xV9800", "Mark", "Colleson", "0824567890", "colemark@gmail.com", Organizer.OrganizerType.FACULTY);
     }
 
     @Test
-    void testCreateOrganizer() throws Exception {
-        when(organizerService.create(any(Organizer.class))).thenReturn(organizer);
+    @Order(1)
+    void create() {
+        String url = BASE_URL + "/create";
+        ResponseEntity<Organizer> postResponse = restTemplate.postForEntity(url, organizer, Organizer.class);
+        assertNotNull(postResponse.getBody());
 
-        mockMvc.perform(post("/api/organizer")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(organizer)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(organizer.getName()));
+        organizer = postResponse.getBody();
+        assertEquals("Mark", organizer.getName());
+        System.out.println("Created: " + organizer.getName());
 
     }
 
     @Test
-    void testReadOrganizer() throws Exception {
-        when(organizerService.read(eq(organizer.getId()))).thenReturn(organizer);
-
-        mockMvc.perform(get("/api/organizer/{id}", organizer.getId()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(organizer.getName()))
-                .andExpect(jsonPath("$.surname").value(organizer.getSurname()))
-                .andExpect(jsonPath("$.phone").value(organizer.getPhone()))
-                .andExpect(jsonPath("$.email").value(organizer.getEmail()))
-                .andExpect(jsonPath("$.organizerType").value(organizer.getOrganizerType().toString()));
+    @Order(2)
+    void read() {
+        String url = BASE_URL + "/read/" + organizer.getId();
+        ResponseEntity<Organizer> response = restTemplate.getForEntity(url, Organizer.class);
+        assertEquals(organizer.getId(), Objects.requireNonNull(response.getBody()).getId());
+        System.out.println("Read: " + organizer.getId());
     }
 
     @Test
-    void testUpdateOrganizer() throws Exception {
-        when(organizerService.update(any(Organizer.class))).thenReturn(organizer);
+    @Order(3)
+    void update() {
+        assertNotNull(organizer.getId());
+        Organizer updatedOrganizer = new Organizer.Builder().copy(organizer).setSurname("Coleman").build();
+        String url = BASE_URL + "/update";
+        this.restTemplate.put(url, updatedOrganizer);
 
-        mockMvc.perform(put("/api/organizer")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(organizer)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(organizer.getName()));
+        ResponseEntity<Organizer> response = this.restTemplate.getForEntity(BASE_URL + "/read/" + organizer.getId(), Organizer.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(updatedOrganizer.getSurname(), response.getBody().getSurname());
+        System.out.println("Updated Organizer Surname: " + response.getBody().getSurname());
+
+        organizer = response.getBody();
     }
 
     @Test
-    void testDeleteOrganizer() throws Exception {
-        doNothing().when(organizerService).delete(eq(organizer.getId()));
+    @Order(5)
+    void delete() {
+        String url = BASE_URL + "/delete/" + organizer.getId();
+        this.restTemplate.delete(url);
 
-        mockMvc.perform(delete("/api/organizer/{id}", organizer.getId()))
-                .andExpect(status().isNoContent());
+        ResponseEntity<Organizer> response = this.restTemplate.getForEntity(BASE_URL + "/read/" + organizer.getId(), Organizer.class);
+        assertNull(response.getBody());
+        System.out.println("Deleted Organizer with ID: " + organizer.getId());
     }
 
     @Test
-    void testGetAllOrganizers() throws Exception {
-        List<Organizer> organizers = List.of(organizer);
-        when(organizerService.getAll()).thenReturn(organizers);
-
-        mockMvc.perform(get("/api/organizer"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value(organizer.getName()))
-                .andExpect(jsonPath("$[0].surname").value(organizer.getSurname()))
-                .andExpect(jsonPath("$[0].phone").value(organizer.getPhone()))
-                .andExpect(jsonPath("$[0].email").value(organizer.getEmail()))
-                .andExpect(jsonPath("$[0].organizerType").value(organizer.getOrganizerType().toString()));
+    @Order(4)
+    void getAll() {
+        String url = BASE_URL + "/all";
+        ResponseEntity<Organizer[]> response = restTemplate.getForEntity(url, Organizer[].class);
+        assertNotNull(response.getBody());
+        System.out.println("Get All: ");
+        for (Organizer organizer : response.getBody()) {
+            System.out.println(organizer);
+        }
     }
 }

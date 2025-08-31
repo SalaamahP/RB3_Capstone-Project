@@ -1,8 +1,3 @@
-/* CartController.java
- * Cart Controller class
- * Author: Nobahle Vuyiswa Nzimande (222641533)
- * Date: 25 May 2025
- */
 package za.ac.cput.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +9,7 @@ import za.ac.cput.service.CartService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("/cart")
 public class CartController {
 
     private final CartService cartService;
@@ -24,33 +19,31 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Cart> create(@RequestBody Cart cart) {
-        Cart createdCart = cartService.create(cart);
-        return ResponseEntity.ok(createdCart);
+        return ResponseEntity.ok(cartService.create(cart));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Cart> read(@PathVariable String id) {
+    @GetMapping("/read/{id}")
+    public ResponseEntity<Cart> read(@PathVariable Long id) {
         Cart cart = cartService.read(id);
-        return cart != null ? ResponseEntity.ok(cart) : ResponseEntity.notFound().build();
+        return ResponseEntity.ok(cart); 
     }
 
-    @PutMapping
+    @PutMapping("/update")
     public ResponseEntity<Cart> update(@RequestBody Cart cart) {
-        Cart updatedCart = cartService.update(cart);
-        return updatedCart != null ? ResponseEntity.ok(updatedCart) : ResponseEntity.notFound().build();
+        Cart updated = cartService.update(cart);
+        return ResponseEntity.ok(updated); 
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable String id) {
-        boolean deleted = cartService.delete(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        cartService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping
+    @GetMapping("/getAll")
     public ResponseEntity<List<Cart>> getAll() {
-        List<Cart> carts = cartService.getAll();
-        return ResponseEntity.ok(carts);
+        return ResponseEntity.ok(cartService.getAll());
     }
 }

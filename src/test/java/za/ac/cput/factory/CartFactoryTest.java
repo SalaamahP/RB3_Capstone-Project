@@ -6,7 +6,7 @@
  */
 package za.ac.cput.factory;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import za.ac.cput.domain.Cart;
 import za.ac.cput.domain.Cart.PaymentOption;
 
@@ -14,35 +14,44 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CartFactoryTest {
-// Test case to verify the successful creation of a Cart object
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class CartFactoryTest {
+
     @Test
+    @Order(1)
     void testCreateCartSuccess() {
         Cart cart = CartFactory.createCart("123L", PaymentOption.CASH, LocalDateTime.now());
-        assertNotNull(cart); // Check if the cart object is not null
+        assertNotNull(cart);
         assertEquals("123L", cart.getUserId());
         assertEquals(PaymentOption.CASH, cart.getPaymentOption());
         assertNotNull(cart.getBookingDate());
+        System.out.println("Cart created successfully: " + cart);
     }
-// Test case to verify the exception thrown when an invalid user ID is provided
+
     @Test
+    @Order(2)
     void testCreateCartWithInvalidUserId() {
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
                 CartFactory.createCart("", PaymentOption.CASH, LocalDateTime.now()));
-        assertEquals("User ID is required", exception.getMessage()); // verify the exception message
+        assertEquals("User ID is required", exception.getMessage());
+        System.out.println("Invalid UserId check passed");
     }
-//Test case to verify the exception thrown when a null payment option is provided
+
     @Test
+    @Order(3)
     void testCreateCartWithNullPaymentOption() {
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
                 CartFactory.createCart("123L", null, LocalDateTime.now()));
         assertEquals("Payment option is required", exception.getMessage());
+        System.out.println("Null PaymentOption check passed");
     }
-// Test case to verify the exception thrown when a null booking date is provided
+
     @Test
+    @Order(4)
     void testCreateCartWithNullBookingDate() {
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
                 CartFactory.createCart("123L", PaymentOption.CASH, null));
         assertEquals("Booking date is required", exception.getMessage());
+        System.out.println("Null BookingDate check passed");
     }
 }

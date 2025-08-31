@@ -6,9 +6,11 @@
 package za.ac.cput.service;
 
 import za.ac.cput.domain.Cart;
-
 import java.util.List;
 
-public interface CartService extends IService<Cart, String> {
+public interface CartService extends IService<Cart, Long> {
+    @Override
+    Cart read(Long id); 
+    
     List<Cart> getAll();
 }
