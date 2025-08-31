@@ -1,3 +1,8 @@
+/*
+Author: Patience Phakathi (222228431)
+Date: 26/08/2025
+ */
+
 package za.ac.cput.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,37 +14,33 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public abstract class CartItemServiceImpl implements CartItemService {
+public class CartItemServiceImpl implements CartItemService {
 
     private final CartItemRepository repository;
 
     @Autowired
     public CartItemServiceImpl(CartItemRepository repository) {
+
         this.repository = repository;
     }
 
+
     @Override
-    public CartItem save(CartItem cartItem) {
-        return repository.save(cartItem);
+    public CartItem create(CartItem cartItem) {
+        return this.repository.save(cartItem);
     }
 
     @Override
-    public Optional<CartItem> findById(String id) {
-        return repository.findById(id);
+    public CartItem read(String s) {
+        return this.repository.findById(s).orElse(null);
     }
 
     @Override
-    public List<CartItem> findAll() {
-        return repository.findAll();
+    public CartItem update(CartItem cartItem) {
+        return this.repository.save(cartItem);
     }
-
     @Override
-    public List<CartItem> findByStudentId(String studentId) {
-        return repository.findByStudent_StudentId(studentId);
-    }
-
-    @Override
-    public void delete(String id) {
-        repository.deleteById(id);
+    public List<CartItem> getAll() {
+        return this.repository.findAll();
     }
 }
