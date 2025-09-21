@@ -1,0 +1,1 @@
+// This file was removed to avoid conflicts with the main card.tsx component
