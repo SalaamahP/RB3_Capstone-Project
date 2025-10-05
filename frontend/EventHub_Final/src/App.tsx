@@ -88,6 +88,12 @@ function AppContent() {
               <CreateVenue />
             </ProtectedRoute>
           } />
+
+          <Route path="/venues/edit/:id" element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <CreateVenue />
+            </ProtectedRoute>
+          } />
           
           <Route path="/cart" element={
             <ProtectedRoute>

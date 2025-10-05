@@ -1,5 +1,5 @@
 // API service layer for SpringBoot backend integration
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8001/SEMS';
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080/SEMS';
 
 if (import.meta.env.DEV) {
   console.log('✅ API_BASE_URL:', API_BASE_URL);
@@ -331,42 +331,78 @@ class ApiService {
 
   // Venues
   async getVenues(): Promise<Venue[]> {
-    const mockVenues: Venue[] = [
-      {
-        venueId: 1,
-        venueName: 'Main Auditorium',
-        venueLocation: '123 University Ave, Campus Building A',
-        capacity: 500
-      },
-      {
-        venueId: 2,
-        venueName: 'Art Gallery',
-        venueLocation: '456 Arts Building, 2nd Floor',
-        capacity: 150
-      },
-      {
-        venueId: 3,
-        venueName: 'Sports Arena',
-        venueLocation: '789 Athletic Complex',
-        capacity: 2000
-      }
-    ];
-
-    try {
-      const response = await fetch(`${API_BASE_URL}${API_PATHS.VENUES}`, {
-        headers: this.getAuthHeaders(),
-      });
-      return this.handleResponse(response);
-    } catch (error) {
-      return mockVenues;
-    }
+    const response = await fetch(`${API_BASE_URL}${API_PATHS.VENUES}/getAll`, {
+      headers: this.getAuthHeaders(),
+    });
+  
+    return this.handleResponse(response);
   }
 
+  async getVenue(id: number): Promise<Venue> {
+    const response = await fetch(`${API_BASE_URL}${API_PATHS.VENUES}/read/${id}`, {
+      headers: this.getAuthHeaders(),
+    });
+  
+    return this.handleResponse(response);
+  }
+  // async getVenues(): Promise<Venue[]> {
+  //   const mockVenues: Venue[] = [
+  //     {
+  //       venueId: 1,
+  //       venueName: 'Main Auditorium',
+  //       venueLocation: '123 University Ave, Campus Building A',
+  //       capacity: 500
+  //     },
+  //     {
+  //       venueId: 2,
+  //       venueName: 'Art Gallery',
+  //       venueLocation: '456 Arts Building, 2nd Floor',
+  //       capacity: 150
+  //     },
+  //     {
+  //       venueId: 3,
+  //       venueName: 'Sports Arena',
+  //       venueLocation: '789 Athletic Complex',
+  //       capacity: 2000
+  //     }
+  //   ];
+
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}${API_PATHS.VENUES}`, {
+  //       headers: this.getAuthHeaders(),
+  //     });
+  //     return this.handleResponse(response);
+  //   } catch (error) {
+  //     return mockVenues;
+  //   }
+  // }
+
   async createVenue(venue: Omit<Venue, 'venueId'>): Promise<Venue> {
-    const response = await fetch(`${API_BASE_URL}${API_PATHS.VENUES}`, {
+    const response = await fetch(`${API_BASE_URL}${API_PATHS.VENUES}/create`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(venue),
+    });
+    return this.handleResponse(response);
+  }
+
+  async updateVenue(id: number, data: { venueName: String; venueLocation: string; capacity: number}): Promise<Venue> {
+    const response = await fetch(`${API_BASE_URL}${API_PATHS.VENUES}/update`, {
+      method: 'PUT',
+      headers: {
+      ...this.getAuthHeaders(),
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({venueId: id, ...data}),
+  });
+    return this.handleResponse(response);
+    
+  }
+
+  async deleteVenue(id: number): Promise<boolean> {
+    const response = await fetch(`${API_BASE_URL}${API_PATHS.VENUES}/delete/${id}`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders(),
     });
     return this.handleResponse(response);
   }

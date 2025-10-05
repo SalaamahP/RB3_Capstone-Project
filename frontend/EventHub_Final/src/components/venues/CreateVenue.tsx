@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import apiService from '../../services/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -8,15 +6,46 @@ import { Textarea } from '../ui/textarea';
 import { Label } from '../ui/label';
 import { ArrowLeft, MapPin, Users, Building } from 'lucide-react';
 import { toast } from '../ui/sonner';
+import apiService, {Venue} from '../../services/api';
+import { useNavigate, Link, useParams } from 'react-router-dom';
 
-export default function CreateVenue() {
+interface CreateVenueProps {
+  venue?: Venue;
+}
+
+export default function CreateVenue({venue}: CreateVenueProps) {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const isEdit = !!id;
+
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    venueName: '',
-    venueLocation: '',
-    capacity: ''
+    venueName: venue?.venueName || '',
+    venueLocation: venue?.venueLocation ||  '',
+    capacity: venue?.capacity ||  ''
   });
+
+  React.useEffect(()=> {
+    const loadVenue = async () => {
+      if (!id) return;
+      try {
+        setLoading(true);
+        const fetchedVenue = await apiService.getVenue(Number(id));
+        setFormData({
+          venueName: fetchedVenue.venueName,
+          venueLocation: fetchedVenue.venueLocation,
+          capacity: String(fetchedVenue.capacity),
+        });
+      } catch (error){
+        toast.error('Failed to load venue details');
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadVenue();
+  }, [id]);
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -41,14 +70,26 @@ export default function CreateVenue() {
 
     try {
       setLoading(true);
+
       const venueData = {
         venueName: formData.venueName,
         venueLocation: formData.venueLocation,
         capacity: capacity
       };
 
+      if (isEdit && id) {
+        await apiService.updateVenue(Number(id),{
+        venueName: formData.venueName,
+        venueLocation: formData.venueLocation,
+        capacity: capacity
+        });
+        toast.success('Venue updated successfully');
+      } else {
+
       await apiService.createVenue(venueData);
       toast.success('Venue created successfully!');
+      }
+
       navigate('/venues');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to create venue');
@@ -72,8 +113,12 @@ export default function CreateVenue() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-3xl text-gray-900">Add New Venue</h1>
-            <p className="text-gray-600 mt-1">Create a new venue for hosting events</p>
+            <h1 className="text-3xl text-gray-900">
+              {isEdit ? 'Edit Venue' : 'Add New Venue'}
+              </h1>
+            <p className="text-gray-600 mt-1">
+              {isEdit ? 'Update venue details' : 'Create a new venue for hosting events'}
+              </p>
           </div>
         </div>
       </div>
@@ -149,7 +194,9 @@ export default function CreateVenue() {
                   className="flex-1"
                   disabled={loading || !isFormValid}
                 >
-                  {loading ? 'Creating Venue...' : 'Create Venue'}
+                  {loading 
+                  ? (isEdit ? 'Updating Venue' : 'Creating Venue')
+                  : (isEdit ? 'Update Venue' : 'Create Venue')}
                 </Button>
                 <Button
                   type="button"

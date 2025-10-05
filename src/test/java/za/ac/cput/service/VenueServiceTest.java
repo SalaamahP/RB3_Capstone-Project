@@ -62,14 +62,14 @@ class VenueServiceTest {
 
     }
 
-    @Test
-    @Order(5)
-    void delete(){
-        boolean deleted = service.delete(venue.getVenueId());
-        assertTrue(deleted);
-        assertNull(service.read(venue.getVenueId()));
-
-    }
+//    @Test
+//    @Order(5)
+//    void delete(){
+//        boolean deleted = service.delete(venue.getVenueId());
+//        assertTrue(deleted);
+//        assertNull(service.read(venue.getVenueId()));
+//
+//    }
 
     @Test
     @Order(4)

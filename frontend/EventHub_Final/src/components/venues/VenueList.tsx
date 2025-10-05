@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import apiService, { Venue } from '../../services/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
@@ -13,11 +13,17 @@ import {
   Building
 } from 'lucide-react';
 import { toast } from '../ui/sonner';
+import { error } from 'console';
 
 export default function VenueList() {
   const [venues, setVenues] = useState<Venue[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
+
+   const handleEdit = (venue: Venue) => {
+    navigate(`/venues/edit/${venue.venueId}`);
+ };
 
   useEffect(() => {
     loadVenues();
@@ -35,10 +41,26 @@ export default function VenueList() {
     }
   };
 
+                const handleDelete = async (id: number) => {
+                  if(!confirm('Are you sure you want to delete this venue?')) return;
+
+                  try{
+                    await apiService.deleteVenue(id);
+                    toast.success('Venue had been successfully deleted')
+                    loadVenues();
+                  }catch(error) {
+                    console.error(error);
+                    toast.error('Venue could not be deleted');
+                    
+                  }
+                };
+
   const filteredVenues = venues.filter(venue =>
     venue.venueName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     venue.venueLocation.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
+                
 
   if (loading) {
     return (
@@ -54,6 +76,8 @@ export default function VenueList() {
       </div>
     );
   }
+
+
 
   return (
     <div className="p-6 space-y-6">
@@ -147,9 +171,23 @@ export default function VenueList() {
                   </div>
                 </div>
 
-                <div className="pt-2 border-t">
-                  <Button variant="outline" className="w-full">
-                    View Details
+
+
+                <div className="pt-2 border-t flex space-x-2">
+                  <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={()=> handleEdit(venue)}
+                  >
+                    Edit
+                  </Button>
+
+                   <Button 
+                  variant="destructive" 
+                  className="flex-1"
+                  onClick={()=> handleDelete(venue.venueId)}
+                  >
+                    Delete
                   </Button>
                 </div>
               </CardContent>
