@@ -1,4 +1,5 @@
-<img width="1331" height="1048" alt="image" src="https://github.com/user-attachments/assets/6ac54181-7ef1-4efa-87bf-67870416dbac" />
+![WhatsApp Image 2025-09-15 at 18 58 58_27f1cdaf](https://github.com/user-attachments/assets/84dfc110-66a0-48f3-84e7-90c809f736f8)
+
 
 # Capstone Project 
 Student Event Management System -SEMS
