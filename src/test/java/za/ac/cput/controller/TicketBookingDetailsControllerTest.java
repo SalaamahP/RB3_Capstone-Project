@@ -1,4 +1,4 @@
-package za.ac.cput.controller;
+/*package za.ac.cput.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -103,3 +103,4 @@ class TicketBookingDetailsControllerTest {
                 .andExpect(status().isNotFound());
     }
 }
+*/

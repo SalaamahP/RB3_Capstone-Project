@@ -4,7 +4,7 @@ Author: S Peck (230207170)
 Date: 10/05/2025
  */
 
-package za.ac.cput.domain;
+/*package za.ac.cput.domain;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -110,3 +110,4 @@ public class Student extends User{
 
 }
 
+*/

@@ -1,6 +1,6 @@
 //[author] Jaedon Prince, 230473474
 //[date] 25/05/2025
-package za.ac.cput.service;
+/*package za.ac.cput.service;
 
 import za.ac.cput.domain.Notification;
 import java.util.List;
@@ -16,3 +16,4 @@ public interface NotificationService {
     List<Notification> getAll();
     Notification save(Notification notification);
 }
+*/

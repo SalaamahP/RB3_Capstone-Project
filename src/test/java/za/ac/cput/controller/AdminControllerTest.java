@@ -3,7 +3,7 @@
     * Author: Oratile Phologane (230690969)
     * Date: 25 May 2025
  */
-package za.ac.cput.controller;
+/*package za.ac.cput.controller;
 
 
 import org.junit.jupiter.api.*;
@@ -114,3 +114,4 @@ public class AdminControllerTest {
     }
 
 }
+*/

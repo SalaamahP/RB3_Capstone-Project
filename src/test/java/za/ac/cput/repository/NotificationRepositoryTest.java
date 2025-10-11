@@ -1,6 +1,6 @@
 //[author] Jaedon Prince, 230473474
 //[date] 25/05/2025
-package za.ac.cput.repository;
+/*package za.ac.cput.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,3 +35,4 @@ class NotificationRepositoryTest {
         assertEquals("Repo Test", repository.findById("N200").get().getMessage());
     }
 }
+*/

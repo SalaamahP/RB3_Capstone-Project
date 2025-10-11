@@ -3,7 +3,7 @@ Admin POJO class
 Author: OP Phologane (230690939)
 Date: 11/05/2025
  */
-package za.ac.cput.domain;
+/* za.ac.cput.domain;
 
 
 import jakarta.persistence.*;
@@ -121,3 +121,4 @@ public class Admin extends User {
         }
     }
 }
+*/

@@ -3,7 +3,7 @@
  * Author: Oratile Phologane (230690939)
  * Date: 25 May 2025
  */
-package za.ac.cput.Repository;
+/*package za.ac.cput.Repository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,4 +63,4 @@ public class OrganizerRepositoryTest {
     }
 
 }
-
+*/

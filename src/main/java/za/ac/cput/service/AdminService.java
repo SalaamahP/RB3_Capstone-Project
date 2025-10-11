@@ -3,7 +3,7 @@ Admin Service class
 Author: Oratile Phologane (230690939)
 Date: 25 May 2025
 */
-package za.ac.cput.service;
+/*package za.ac.cput.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,3 +56,4 @@ public class AdminService implements IAdminService {
     }
 
 }
+*/

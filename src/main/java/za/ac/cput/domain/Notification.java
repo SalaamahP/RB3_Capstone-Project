@@ -1,6 +1,6 @@
 //[author] Jaedon Prince, 230473474
 //[date] 11/05/2025
-package za.ac.cput.domain;
+/*package za.ac.cput.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * Notification entity (builder-based).
  * Table should be created by your project's SQL (schema.sql) per team lead.
  */
-@Entity
+/*@Entity
 @Table(name = "notification")
 public class Notification {
 
@@ -77,3 +77,4 @@ public class Notification {
         public Notification build() { return new Notification(this); }
     }
 }
+*/

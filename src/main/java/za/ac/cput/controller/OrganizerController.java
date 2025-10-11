@@ -1,4 +1,4 @@
-package za.ac.cput.controller;
+/*package za.ac.cput.controller;
 
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,3 +50,4 @@ public class OrganizerController {
         return organizerService.getAll();
     }
 }
+*/

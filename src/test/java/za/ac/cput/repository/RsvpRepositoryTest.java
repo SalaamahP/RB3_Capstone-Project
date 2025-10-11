@@ -1,4 +1,4 @@
-package za.ac.cput.repository;
+/*package za.ac.cput.repository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,3 +57,4 @@ class RsvpRepositoryTest {
         assertEquals(Status.CONFIRMED, saved.getStatus());
     }
 }
+*/

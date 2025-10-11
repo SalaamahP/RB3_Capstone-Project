@@ -1,6 +1,6 @@
 // Author: Jaedon Prince (230473474)
 // Date: 11 May 2025
-package za.ac.cput.domain;
+/*package za.ac.cput.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -110,3 +110,4 @@ public class TicketBookingDetails {
     }
 }
 
+*/

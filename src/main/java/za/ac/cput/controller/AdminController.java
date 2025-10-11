@@ -3,7 +3,7 @@
  * Author: Oratile Phologane (230690939)
  * Date: 25 May 2025
  */
-package za.ac.cput.controller;
+/*package za.ac.cput.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import za.ac.cput.domain.Admin;
@@ -51,3 +51,4 @@ public class AdminController {
         return ResponseEntity.ok(admins);
     }
 }
+*/

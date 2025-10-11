@@ -1,4 +1,4 @@
-package za.ac.cput.factory;
+/*package za.ac.cput.factory;
 
 import za.ac.cput.domain.Enum.Status;
 import za.ac.cput.domain.Rsvp;
@@ -25,3 +25,5 @@ public class RsvpFactory {
 
 
 }
+
+ */

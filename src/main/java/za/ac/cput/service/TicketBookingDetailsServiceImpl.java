@@ -1,6 +1,6 @@
 //[author] Jaedon Prince, 230473474
 //[date] 25/05/2025
-package za.ac.cput.service;
+/*package za.ac.cput.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,3 +59,4 @@ public class TicketBookingDetailsServiceImpl implements TicketBookingDetailsServ
         return repository.save(details);
     }
 }
+*/

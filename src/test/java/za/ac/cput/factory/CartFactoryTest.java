@@ -48,7 +48,8 @@ class CartFactoryTest {
 
     @Test
     @Order(4)
-    void testCreateCartWithNullBookingDate() {
+    void
+    testCreateCartWithNullBookingDate() {
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
                 CartFactory.createCart("123L", PaymentOption.CASH, null));
         assertEquals("Booking date is required", exception.getMessage());
