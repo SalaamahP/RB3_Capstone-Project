@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class Cart {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cartId;
 
     private String userId;
@@ -26,6 +26,16 @@ public class Cart {
     public String getUserId() { return userId; }
     public PaymentOption getPaymentOption() { return paymentOption; }
     public LocalDateTime getBookingDate() { return bookingDate; }
+
+    @Override
+    public String toString() {
+        return "Cart{" +
+                "cartId=" + cartId +
+                ", userId='" + userId + '\'' +
+                ", paymentOption=" + paymentOption +
+                ", bookingDate=" + bookingDate +
+                '}';
+    }
 
     public static class Builder {
         private String userId;

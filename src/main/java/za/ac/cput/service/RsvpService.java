@@ -1,4 +1,4 @@
-package za.ac.cput.service;
+/*package za.ac.cput.service;
 
 import za.ac.cput.domain.Rsvp;
 
@@ -8,3 +8,4 @@ public interface RsvpService extends IService<Rsvp, String> {
     List<Rsvp> getAll();
 
 }
+*/

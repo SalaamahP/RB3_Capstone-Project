@@ -1,6 +1,6 @@
 //[author] Jaedon Prince, 230473474
 //[date] 25/05/2025
-package za.ac.cput.service;
+/*package za.ac.cput.service;
 
 import za.ac.cput.domain.Notification;
 import za.ac.cput.domain.TicketBookingDetails;
@@ -15,3 +15,4 @@ public interface TicketBookingDetailsService {
     List<TicketBookingDetails> getAll();
     TicketBookingDetails save(TicketBookingDetails details);
 }
+*/

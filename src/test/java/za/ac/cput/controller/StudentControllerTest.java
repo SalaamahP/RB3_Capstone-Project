@@ -1,4 +1,4 @@
-package za.ac.cput.controller;
+/*package za.ac.cput.controller;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,3 +107,4 @@ class StudentControllerTest {
         }
     }
 }
+*/

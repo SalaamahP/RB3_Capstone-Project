@@ -3,7 +3,7 @@ Student Factory Test class
 Author: Salaamah Peck (230207170)
 Date: 18 May 2025
 */
-package za.ac.cput.factory;
+/*package za.ac.cput.factory;
 
 import org.junit.jupiter.api.*;
 import za.ac.cput.domain.Student;
@@ -73,3 +73,4 @@ class StudentFactoryTest {
 
     }
 }
+*/

@@ -9,7 +9,8 @@ import za.ac.cput.service.CartService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/api/cart")
+@CrossOrigin(origins = "*")
 public class CartController {
 
     private final CartService cartService;
@@ -27,13 +28,13 @@ public class CartController {
     @GetMapping("/read/{id}")
     public ResponseEntity<Cart> read(@PathVariable Long id) {
         Cart cart = cartService.read(id);
-        return ResponseEntity.ok(cart); 
+        return ResponseEntity.ok(cart);
     }
 
     @PutMapping("/update")
     public ResponseEntity<Cart> update(@RequestBody Cart cart) {
         Cart updated = cartService.update(cart);
-        return ResponseEntity.ok(updated); 
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -46,4 +47,5 @@ public class CartController {
     public ResponseEntity<List<Cart>> getAll() {
         return ResponseEntity.ok(cartService.getAll());
     }
+
 }

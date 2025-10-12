@@ -4,7 +4,7 @@ Author: Patience Phakathi (222228431)
 Date: 11/05/2025
  */
 
-package za.ac.cput.domain;
+/*package za.ac.cput.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -109,3 +109,4 @@ public class CartItem {
         }
     }
 }
+*/

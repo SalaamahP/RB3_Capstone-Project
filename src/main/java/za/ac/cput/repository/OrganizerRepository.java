@@ -1,4 +1,4 @@
-package za.ac.cput.repository;
+/*package za.ac.cput.repository;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,3 +11,4 @@ import java.util.List;
 public interface OrganizerRepository extends JpaRepository<Organizer, Long> {
 //List<Organizer> findByOrganizerId(Long OrganizerId);
 }
+*/

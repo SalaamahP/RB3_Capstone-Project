@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import za.ac.cput.domain.Student;
+//import za.ac.cput.domain.Student;
 import za.ac.cput.domain.Venue;
 import za.ac.cput.service.VenueService;
 

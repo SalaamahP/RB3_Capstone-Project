@@ -1,6 +1,6 @@
 //[author] Jaedon Prince, 230473474
 //[date] 25/05/2025
-package za.ac.cput.controller;
+/*package za.ac.cput.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,3 +50,4 @@ public class TicketBookingDetailsController {
     }
 }
 
+*/

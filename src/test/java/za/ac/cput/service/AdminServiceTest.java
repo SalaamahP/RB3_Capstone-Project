@@ -1,4 +1,4 @@
-package za.ac.cput.service;
+/*package za.ac.cput.service;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,3 +72,4 @@ public class AdminServiceTest {
 
 
 }
+*/

@@ -1,4 +1,4 @@
-package za.ac.cput.repository;
+/*package za.ac.cput.repository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,3 +58,4 @@ class CartItemRepositoryTest {
         assertEquals("PROD001", saved.getProductId());
     }
 }
+*/

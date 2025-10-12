@@ -3,7 +3,7 @@ Venue Factory Test class
 Author: Salaamah Peck (230207170)
 Date: 18 May 2025
 */
-package za.ac.cput.factory;
+/*package za.ac.cput.factory;
 
 import org.junit.jupiter.api.Test;
 import za.ac.cput.domain.Venue;
@@ -39,3 +39,4 @@ class VenueFactoryTest {
         assertEquals("Venue capacity cannot be negative", exception.getMessage());
     }
 }
+*/

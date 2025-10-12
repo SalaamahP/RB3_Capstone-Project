@@ -3,7 +3,7 @@ OrganizerFactory class
 Author: OP Phologane (230690939)
 Date: 17/05/2025 */
 
-package za.ac.cput.factory;
+/*package za.ac.cput.factory;
 
 import za.ac.cput.util.Helper;
 import za.ac.cput.domain.Organizer;
@@ -43,3 +43,4 @@ public class OrganizerFactory {
                 .build();
     }
 }
+*/

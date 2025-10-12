@@ -1,4 +1,4 @@
-package za.ac.cput.repository;
+/*package za.ac.cput.repository;
 
 //import org.hibernate.usertype.UserType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,3 +13,4 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
 
 
 }
+*/

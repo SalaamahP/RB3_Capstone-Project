@@ -20,14 +20,27 @@ class EventServiceTest {
     @Autowired
     private EventService eventService;
 
+    @Autowired
+    private VenueService venueService;
+
     private static Event event;
+    private static Venue venue;
 
     @BeforeAll
-    static void setUp() {
-        Venue venue = null; // placeholder
+    static void setUp(@Autowired VenueService venueService) {
+        // Create and save a venue before testing events
+        venue = new Venue.Builder()
+                .setVenueName("CPUT Hall")
+                .setVenueLocation("Cape Town")
+                .setCapacity(100)
+                .build();
+
+        venue = venueService.create(venue);
+
+        // Now safely create an event with a valid venue
         event = EventFactory.createEvent(
-                "event123",
                 "Spring Boot Workshop",
+                "Learn Spring Boot Advanced Concepts",
                 EventCategory.SEMINAR,
                 LocalDateTime.of(2025, 5, 18, 10, 0),
                 venue,
@@ -43,6 +56,7 @@ class EventServiceTest {
         assertNotNull(created.getEventId());
         assertEquals("Spring Boot Workshop", created.getEventName());
         event = created;
+        System.out.println("Created: " + created);
     }
 
     @Test
@@ -51,15 +65,21 @@ class EventServiceTest {
         Event readEvent = eventService.read(event.getEventId());
         assertNotNull(readEvent);
         assertEquals(event.getEventId(), readEvent.getEventId());
+        System.out.println("Read: " + readEvent);
     }
 
     @Test
     @Order(3)
     void update() {
-        Event updatedEvent = new Event.Builder().copy(event).setEventName("Spring Boot Advanced Workshop").build();
+        Event updatedEvent = new Event.Builder()
+                .copy(event)
+                .setEventName("Spring Boot Advanced Workshop")
+                .build();
+
         Event updated = eventService.update(updatedEvent);
         assertEquals("Spring Boot Advanced Workshop", updated.getEventName());
         event = updated;
+        System.out.println("Updated: " + updated);
     }
 
     @Test
@@ -68,6 +88,7 @@ class EventServiceTest {
         List<Event> events = eventService.getAll();
         assertNotNull(events);
         assertFalse(events.isEmpty());
+        System.out.println("All Events: " + events);
     }
 
     @Test
@@ -76,5 +97,6 @@ class EventServiceTest {
         boolean deleted = eventService.delete(event.getEventId());
         assertTrue(deleted);
         assertNull(eventService.read(event.getEventId()));
+        System.out.println("Deleted Event ID: " + event.getEventId());
     }
 }
