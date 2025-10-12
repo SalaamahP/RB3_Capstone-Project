@@ -14,7 +14,6 @@ import {
   Minus, 
   Calendar, 
   MapPin,
-  CreditCard,
   ArrowLeft
 } from 'lucide-react';
 import { toast } from '../ui/sonner';
@@ -25,11 +24,8 @@ export default function Cart() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const paymentOptions = [
-    { value: 'credit_card', label: 'Credit Card' },
-    { value: 'debit_card', label: 'Debit Card' },
-    { value: 'paypal', label: 'PayPal' },
-    { value: 'bank_transfer', label: 'Bank Transfer' },
-    { value: 'cash', label: 'Cash on Pickup' }
+      { value: 'CASH', label: 'Cash on Pickup' }
+      {value: 'DEPOSIT', label: 'Deposit'}
   ];
 
   const handleQuantityChange = async (cartItemId: number, newQuantity: number) => {

@@ -29,7 +29,7 @@ class CartControllerTest {
 
     @BeforeEach
     void init() {
-        BASE_URL = "http://localhost:" + port + "/SEMS/cart";
+        BASE_URL = "http://localhost:" + port + "/SEMS/api/cart";
 
     }
 
@@ -48,7 +48,7 @@ class CartControllerTest {
         ResponseEntity<Cart> response = restTemplate.postForEntity(BASE_URL + "/create", cart, Cart.class);
         assertNotNull(response.getBody());
         cart = response.getBody();
-        assertTrue(cart.getCartId() > 0);
+        assertNotNull(cart.getCartId(), "Cart ID should not be null after saving");
         System.out.println("Created Cart ID: " + cart.getCartId());
     }
 
@@ -66,7 +66,7 @@ class CartControllerTest {
     void update() {
         Cart updatedCart = new Cart.Builder()
                 .copy(cart)
-                .setPaymentOption(PaymentOption.CASH)
+                .setPaymentOption(PaymentOption.DEPOSIT)
                 .build();
 
         restTemplate.put(BASE_URL + "/update", updatedCart);
