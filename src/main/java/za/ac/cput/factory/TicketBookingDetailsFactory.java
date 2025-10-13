@@ -6,14 +6,13 @@ import za.ac.cput.domain.TicketBookingDetails;
 
 public class TicketBookingDetailsFactory {
 
-    public static TicketBookingDetails createTicketBookingDetails(
-            String bookingID, String eventId, String studentId, int numberOfTickets) {
+    public static TicketBookingDetails createBooking(String studentID, String eventID) {
+        if (studentID == null || eventID == null)
+            throw new IllegalArgumentException("All fields must be provided and cannot be null.");
 
         return new TicketBookingDetails.Builder()
-                .setBookingID(bookingID)
-                .setEventId(eventId)
-                .setStudentId(studentId)
-                .setNumberOfTickets(numberOfTickets)
+                .setStudentID(studentID)
+                .setEventID(eventID)
                 .build();
     }
 }

@@ -4,34 +4,43 @@ package za.ac.cput.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import za.ac.cput.domain.Notification;
-
-import java.time.LocalDateTime;
-
+import za.ac.cput.factory.NotificationFactory;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@SpringBootTest
 class NotificationRepositoryTest {
 
     @Autowired
     private NotificationRepository repository;
 
     @Test
-    void saveAndFind() {
-        Notification n = new Notification.Builder()
-                .setNotificationID("N200")
-                .setMessage("Repo Test")
-                .setStudentID("S200")
-                .setEventID("E200")
-                .setTimestamp(LocalDateTime.now())
+    void crudOperations() {
+        Notification n = NotificationFactory.createNotification("Test message", "S001", "E001");
+        Notification saved = repository.save(n);
+        assertNotNull(saved.getNotificationID());
+
+        Notification read = repository.findById(saved.getNotificationID()).orElse(null);
+        assertNotNull(read);
+
+        saved = new Notification.Builder()
+                .setNotificationID(saved.getNotificationID())
+                .setMessage("Updated")
+                .setStudentID("S001")
+                .setEventID("E001")
                 .build();
 
-        repository.save(n);
+        repository.save(saved);
+        Notification updated = repository.findById(saved.getNotificationID()).orElse(null);
+        assertEquals("Updated", updated.getMessage());
 
-        assertTrue(repository.findById("N200").isPresent());
-        assertEquals("Repo Test", repository.findById("N200").get().getMessage());
+        List<Notification> all = repository.findAll();
+        assertTrue(all.size() >= 1);
+
+        repository.deleteById(saved.getNotificationID());
+        assertFalse(repository.existsById(saved.getNotificationID()));
     }
 }
+

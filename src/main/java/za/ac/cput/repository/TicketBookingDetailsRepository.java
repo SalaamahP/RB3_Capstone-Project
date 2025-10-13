@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import za.ac.cput.domain.TicketBookingDetails;
 
 @Repository
-public interface TicketBookingDetailsRepository extends JpaRepository<TicketBookingDetails, String> {
+public interface TicketBookingDetailsRepository extends JpaRepository<TicketBookingDetails, Long> {
 }
 

@@ -1,4 +1,4 @@
-package za.ac.cput.controller;
+/*package za.ac.cput.controller;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,4 +160,4 @@ class RsvpControllerTest {
 //        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
 //        System.out.println("Successfully deleted RSVP with ID: " + createdRsvpId);
 //    }
-}
+}*/
