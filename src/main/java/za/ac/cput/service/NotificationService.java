@@ -12,4 +12,3 @@ public interface NotificationService {
     boolean delete(Long id);
     List<Notification> getAll();
 }
-

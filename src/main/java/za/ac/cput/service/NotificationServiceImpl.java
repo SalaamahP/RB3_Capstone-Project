@@ -50,4 +50,3 @@ public class NotificationServiceImpl implements NotificationService {
         return repository.findAll();
     }
 }
-

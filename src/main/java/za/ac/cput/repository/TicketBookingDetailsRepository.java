@@ -9,4 +9,3 @@ import za.ac.cput.domain.TicketBookingDetails;
 @Repository
 public interface TicketBookingDetailsRepository extends JpaRepository<TicketBookingDetails, Long> {
 }
-
