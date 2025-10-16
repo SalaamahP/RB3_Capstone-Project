@@ -65,6 +65,11 @@ export default function Cart() {
     }
   };
 
+  const clearMockCart = () => {
+    localStorage.removeItem('mockCart');
+    window.location.reload();
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       weekday: 'short',
@@ -301,6 +306,32 @@ export default function Cart() {
                 </Button>
                 <Button variant="outline" className="w-full" asChild>
                   <Link to="/bookings">View Past Bookings</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Debug Section - Remove in production */}
+            <Card className="border-yellow-200 bg-yellow-50">
+              <CardHeader>
+                <CardTitle className="text-yellow-800">🔧 Debug Info</CardTitle>
+                <CardDescription className="text-yellow-700">
+                  Development mode - Backend status
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <p className="text-sm text-yellow-800">
+                  Backend URL: {import.meta.env.VITE_API_URL || 'http://localhost:8080/SEMS'}
+                </p>
+                <p className="text-sm text-yellow-800">
+                  Using mock data: Cart items are stored in localStorage
+                </p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={clearMockCart}
+                  className="w-full text-yellow-800 border-yellow-300"
+                >
+                  Clear Mock Cart
                 </Button>
               </CardContent>
             </Card>

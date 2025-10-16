@@ -52,9 +52,13 @@ export default function EventList() {
   };
 
   const handleAddToCart = async (eventId: number) => {
+    console.log('🛒 Add to Cart clicked for event ID:', eventId);
     try {
+      console.log('🔄 Calling addToCart function...');
       await addToCart(eventId, 1);
+      console.log('✅ Add to Cart completed successfully');
     } catch (error) {
+      console.error('❌ Add to Cart failed:', error);
       // Error handled by CartContext
     }
   };

@@ -32,4 +32,26 @@ public class Helper {
         String phoneRegex = "^(\\+?[0-9]{1,3})?([0-9]{10})$";
         return phone.matches(phoneRegex);
     }
+
+    // ---------- Event-specific Validations ----------
+    public static boolean isValidVenueId(long venueId) {
+        return venueId > 0;
+    }
+
+    public static boolean isValidUserId(long userId) {
+        return userId > 0;
+    }
+
+    public static boolean isValidTicketPrice(double price) {
+        return price >= 0;
+    }
+
+    public static boolean isValidEventCategory(Object category) {
+        return category != null;
+    }
+
+    public static boolean isValidDateTime(Object dateTime) {
+        return dateTime != null;
+    }
 }
+

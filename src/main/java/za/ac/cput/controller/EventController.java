@@ -6,49 +6,67 @@
 package za.ac.cput.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import za.ac.cput.domain.Event;
 import za.ac.cput.service.EventService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/event")
+@RequestMapping("/event")
 public class EventController {
 
-    private final EventService eventService;
+    private final EventService service;
 
     @Autowired
-    public EventController(EventService eventService) {
-        this.eventService = eventService;
+    public EventController(EventService service) {
+        this.service = service;
     }
 
-    @PostMapping
-    public ResponseEntity<Event> create(@RequestBody Event event) {
-        return ResponseEntity.ok(eventService.create(event));
+    @PostMapping("/create")
+    public Event create(@RequestBody Event event) {
+        return service.create(event);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Event> read(@PathVariable long id) {
-        Event event = eventService.read(id);
-        return event != null ? ResponseEntity.ok(event) : ResponseEntity.notFound().build();
+    @GetMapping("/read/{id}")
+    public Event read(@PathVariable Long id) {
+        Event existingEvent = service.read(id);
+        if (existingEvent == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found: " + id);
+        }
+        return existingEvent;
     }
 
-    @PutMapping
-    public ResponseEntity<Event> update(@RequestBody Event event) {
-        Event updated = eventService.update(event);
-        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
+    @PutMapping("/update")
+    public Event update(@RequestBody Event event) {
+        Event existingEvent = service.read(event.getEventId());
+        if (existingEvent == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found: " + event.getEventId());
+        }
+
+        Event updatedEvent = new Event.Builder()
+                .copy(existingEvent)
+                .setEventName(event.getEventName())
+                .setEventDescription(event.getEventDescription())
+                .setEventCategory(event.getEventCategory())
+                .setDateTime(event.getDateTime())
+                .setVenueId(event.getVenueId())
+                .setUserId(event.getUserId())
+                .setTicketPrice(event.getTicketPrice())
+                .build();
+
+        return service.update(updatedEvent);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable long id) {
-        boolean deleted = eventService.delete(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    @DeleteMapping("/delete/{id}")
+    public boolean delete(@PathVariable Long id) {
+        return service.delete(id);
     }
 
-    @GetMapping
-    public ResponseEntity<List<Event>> getAll() {
-        return ResponseEntity.ok(eventService.getAll());
+    @GetMapping("/getAll")
+    public List<Event> getAll() {
+        return service.getAll();
     }
 }

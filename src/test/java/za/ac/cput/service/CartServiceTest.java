@@ -17,62 +17,71 @@ import static org.junit.jupiter.api.Assertions.*;
 class CartServiceTest {
 
     @Autowired
-    private CartService cartService;
+    private ICartService ICartService;
 
-    private Cart cart;
+    private static Cart cart;
 
-    @BeforeEach
-    void setUp() {
-        cart = new Cart.Builder()
-                .setUserId("user123")
-                .setPaymentOption(PaymentOption.CASH)
-                .setBookingDate(LocalDateTime.now())
-                .build();
+    @BeforeAll
+    static void setUp() {
+        cart = CartFactory.createCart(
+                "user123",
+                PaymentOption.CASH,
+                LocalDateTime.now()
+        );
     }
 
     @Test
-    void testCreate() {
-        Cart created = cartService.create(cart);
+    @Order(1)
+    void create() {
+        Cart created = ICartService.create(cart);
         assertNotNull(created);
-        assertNotNull(created.getCartId());
-        System.out.println("Cart created: " + created);
+        assertEquals("user123", created.getUserId());
+        cart = created; // store the cart with generated cartId
+        System.out.println("Created Cart ID: " + cart.getCartId());
     }
 
     @Test
-    void testRead() {
-        Cart created = cartService.create(cart);
-        Cart found = cartService.read(created.getCartId());
-        assertNotNull(found);
-        assertEquals(created.getCartId(), found.getCartId());
-        System.out.println("Cart read: " + found);
+    @Order(2)
+    void read() {
+        Cart readCart = ICartService.read(cart.getCartId());
+        assertNotNull(readCart);
+        assertEquals(cart.getUserId(), readCart.getUserId());
+        System.out.println("Read Cart ID: " + readCart.getCartId());
     }
 
     @Test
-    void testUpdate() {
-        Cart created = cartService.create(cart);
+    @Order(3)
+    void update() {
         Cart updatedCart = new Cart.Builder()
-                .copy(created)
+                .copy(cart)
                 .setPaymentOption(PaymentOption.DEPOSIT)
                 .build();
 
-        Cart updated = cartService.update(updatedCart);
+        Cart updated = ICartService.update(updatedCart);
         assertNotNull(updated);
         assertEquals(PaymentOption.DEPOSIT, updated.getPaymentOption());
-        System.out.println("Cart updated: " + updated);
+        System.out.println("Updated Cart ID: " + updated.getCartId() + ", Payment Option: " + updated.getPaymentOption());
+
+        cart = updated;
     }
 
     @Test
-    void testDelete() {
-        Cart created = cartService.create(cart);
-        boolean deleted = cartService.delete(created.getCartId());
-        assertTrue(deleted);
-        System.out.println("Cart deleted successfully");
-    }
-
-    @Test
-    void testGetAll() {
-        List<Cart> carts = cartService.getAll();
+    @Order(4)
+    void getAll() {
+        List<Cart> carts = ICartService.getAll();
         assertNotNull(carts);
-        System.out.println("All carts: " + carts);
+        assertFalse(carts.isEmpty());
+        System.out.println("All Carts: " + carts);
+    }
+
+    @Test
+    @Order(5)
+    void delete() {
+        boolean deleted = ICartService.delete(cart.getCartId());
+        assertTrue(deleted);
+
+        Cart readAfterDelete = ICartService.read(cart.getCartId());
+        assertNull(readAfterDelete); // ensure it is deleted
+        System.out.println("Deleted Cart ID: " + cart.getCartId());
     }
 }

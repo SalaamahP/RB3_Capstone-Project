@@ -35,13 +35,28 @@ export function CartProvider({ children }: CartProviderProps) {
   const { user } = useAuth();
 
   const refreshCart = async () => {
-    if (!user) return;
+    console.log('🔄 Refreshing cart, user:', user?.userid);
     
     try {
       setLoading(true);
-      const cartData = await apiService.getCart();
-      setCart(cartData);
+      if (user) {
+        const cartData = await apiService.getCart();
+        setCart(cartData);
+        console.log('✅ Cart loaded from API');
+      } else {
+        // Load from localStorage for demo mode
+        const mockCart = JSON.parse(localStorage.getItem('mockCart') || '{"items": []}');
+        setCart({
+          cartId: 1,
+          id: 1,
+          paymentOption: '',
+          bookingDate: new Date().toISOString(),
+          items: mockCart.items || []
+        });
+        console.log('📝 Cart loaded from localStorage:', mockCart);
+      }
     } catch (error) {
+      console.warn('⚠️ Failed to load cart:', error);
       // Cart might not exist yet, that's okay
       setCart(null);
     } finally {
@@ -50,20 +65,33 @@ export function CartProvider({ children }: CartProviderProps) {
   };
 
   useEffect(() => {
-    if (user) {
-      refreshCart();
-    } else {
-      setCart(null);
-    }
+    refreshCart();
   }, [user]);
 
   const addToCart = async (eventId: number, quantity: number) => {
+    console.log('🛒 CartContext addToCart called:', { eventId, quantity, user: user?.userid });
     try {
       setLoading(true);
       await apiService.addToCart(eventId, quantity);
-      await refreshCart();
+      console.log('✅ API addToCart completed, now refreshing cart...');
+      if (user) {
+        await refreshCart();
+      } else {
+        console.log('⚠️ No user logged in, cart won\'t refresh from API');
+        // For demo mode, manually create a cart from localStorage
+        const mockCart = JSON.parse(localStorage.getItem('mockCart') || '{"items": []}');
+        setCart({
+          cartId: 1,
+          id: 1,
+          paymentOption: '',
+          bookingDate: new Date().toISOString(),
+          items: mockCart.items || []
+        });
+      }
       toast.success('Item added to cart!');
+      console.log('✅ Cart updated successfully');
     } catch (error) {
+      console.error('❌ CartContext addToCart failed:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to add item to cart');
       throw error;
     } finally {

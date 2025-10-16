@@ -6,7 +6,6 @@
 package za.ac.cput.domain;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,12 +20,9 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventCategory eventCategory;
     private LocalDateTime dateTime;
+    private long venueId;
     private long userId;
     private double ticketPrice;
-
-    @ManyToOne
-    @JoinColumn(name="venue_id")
-    private Venue venue;
 
     public Event() {}
 
@@ -36,7 +32,7 @@ public class Event {
         this.eventDescription = builder.eventDescription;
         this.eventCategory = builder.eventCategory;
         this.dateTime = builder.dateTime;
-        this.venue = builder.venue;
+        this.venueId = builder.venueId;
         this.userId = builder.userId;
         this.ticketPrice = builder.ticketPrice;
     }
@@ -47,9 +43,19 @@ public class Event {
     public String getEventDescription() { return eventDescription; }
     public EventCategory getEventCategory() { return eventCategory; }
     public LocalDateTime getDateTime() { return dateTime; }
-    public Venue getVenue() { return venue; }
+    public long getVenueId() { return venueId; }
     public long getUserId() { return userId; }
     public double getTicketPrice() { return ticketPrice; }
+
+    // Setters
+    public void setEventId(long eventId) { this.eventId = eventId; }
+    public void setEventName(String eventName) { this.eventName = eventName; }
+    public void setEventDescription(String eventDescription) { this.eventDescription = eventDescription; }
+    public void setEventCategory(EventCategory eventCategory) { this.eventCategory = eventCategory; }
+    public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }
+    public void setVenueId(long venueId) { this.venueId = venueId; }
+    public void setUserId(long userId) { this.userId = userId; }
+    public void setTicketPrice(double ticketPrice) { this.ticketPrice = ticketPrice; }
 
     @Override
     public String toString() {
@@ -59,7 +65,7 @@ public class Event {
                 ", eventDescription='" + eventDescription + '\'' +
                 ", eventCategory=" + eventCategory +
                 ", dateTime=" + dateTime +
-                ", venue=" + venue +
+                ", venueId=" + venueId +
                 ", userId=" + userId +
                 ", ticketPrice=" + ticketPrice +
                 '}';
@@ -71,7 +77,7 @@ public class Event {
         private String eventDescription;
         private EventCategory eventCategory;
         private LocalDateTime dateTime;
-        private Venue venue;
+        private long venueId;
         private long userId;
         private double ticketPrice;
 
@@ -80,7 +86,7 @@ public class Event {
         public Builder setEventDescription(String eventDescription) { this.eventDescription = eventDescription; return this; }
         public Builder setEventCategory(EventCategory eventCategory) { this.eventCategory = eventCategory; return this; }
         public Builder setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; return this; }
-        public Builder setVenueId(Venue venue) { this.venue = venue; return this; }
+        public Builder setVenueId(long venueId) { this.venueId = venueId; return this; }
         public Builder setUserId(long userId) { this.userId = userId; return this; }
         public Builder setTicketPrice(double ticketPrice) { this.ticketPrice = ticketPrice; return this; }
 
@@ -92,7 +98,7 @@ public class Event {
             this.eventDescription = event.eventDescription;
             this.eventCategory = event.eventCategory;
             this.dateTime = event.dateTime;
-            this.venue = event.venue;
+            this.venueId = event.venueId;
             this.userId = event.userId;
             this.ticketPrice = event.ticketPrice;
             return this;
@@ -100,6 +106,6 @@ public class Event {
     }
 
     public enum EventCategory {
-        SPORT, SEMINAR, OTHER
+       ACADEMIC, SPORTS, CULTURAL, SOCIAL, WORKSHOP, CONFERENCE, ENTERTAINMENT, OTHER
     }
 }
