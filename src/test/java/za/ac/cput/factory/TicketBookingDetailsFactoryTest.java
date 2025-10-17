@@ -5,31 +5,87 @@ package za.ac.cput.factory;
 import org.junit.jupiter.api.Test;
 import za.ac.cput.domain.TicketBookingDetails;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TicketBookingDetailsFactoryTest {
 
     @Test
-    void testCreateTicketBookingDetailsSuccess() {
-        TicketBookingDetails booking = TicketBookingDetailsFactory.createTicketBookingDetails(
-                "B001", "E101", "S202", 3);
+    void testCreateBookingSuccess() {
+        TicketBookingDetails booking = TicketBookingDetailsFactory.createBooking(
+                "STU001",
+                "EVT001"
+        );
 
         assertNotNull(booking);
-        assertEquals("B001", booking.getBookingID());
-        assertEquals("E101", booking.getEventId());
-        assertEquals("S202", booking.getStudentId());
-        assertEquals(3, booking.getNumberOfTickets());
+        assertEquals("STU001", booking.getStudentID());
+        assertEquals("EVT001", booking.getEventID());
+        assertNotNull(booking.getBookingDate());
+        System.out.println("Created Booking: " + booking);
     }
 
     @Test
-    void testCreateTicketBookingDetailsDifferentValues() {
-        TicketBookingDetails booking = TicketBookingDetailsFactory.createTicketBookingDetails(
-                "B002", "E202", "S303", 5);
+    void testCreateBookingWithDate() {
+        LocalDateTime bookingDate = LocalDateTime.of(2025, 5, 18, 14, 30);
+        TicketBookingDetails booking = TicketBookingDetailsFactory.createBookingWithDate(
+                "STU002",
+                "EVT002",
+                bookingDate
+        );
 
         assertNotNull(booking);
-        assertEquals("B002", booking.getBookingID());
-        assertEquals("E202", booking.getEventId());
-        assertEquals("S303", booking.getStudentId());
-        assertEquals(5, booking.getNumberOfTickets());
+        assertEquals("STU002", booking.getStudentID());
+        assertEquals("EVT002", booking.getEventID());
+        assertEquals(bookingDate, booking.getBookingDate());
+        System.out.println("Created Booking with Date: " + booking);
+    }
+
+    @Test
+    void testCreateBookingWithNullStudentID() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                TicketBookingDetailsFactory.createBooking(null, "EVT001")
+        );
+        assertEquals("Student ID cannot be null or empty", exception.getMessage());
+    }
+
+    @Test
+    void testCreateBookingWithEmptyStudentID() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                TicketBookingDetailsFactory.createBooking("   ", "EVT001")
+        );
+        assertEquals("Student ID cannot be null or empty", exception.getMessage());
+    }
+
+    @Test
+    void testCreateBookingWithNullEventID() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                TicketBookingDetailsFactory.createBooking("STU001", null)
+        );
+        assertEquals("Event ID cannot be null or empty", exception.getMessage());
+    }
+
+    @Test
+    void testCreateBookingWithEmptyEventID() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                TicketBookingDetailsFactory.createBooking("STU001", "")
+        );
+        assertEquals("Event ID cannot be null or empty", exception.getMessage());
+    }
+
+    @Test
+    void testCreateBookingWithDateNullDate() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                TicketBookingDetailsFactory.createBookingWithDate("STU001", "EVT001", null)
+        );
+        assertEquals("Booking date cannot be null", exception.getMessage());
+    }
+
+    @Test
+    void testCreateBookingWithDateAllNullFields() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                TicketBookingDetailsFactory.createBookingWithDate(null, null, null)
+        );
+        assertEquals("Student ID cannot be null or empty", exception.getMessage());
     }
 }

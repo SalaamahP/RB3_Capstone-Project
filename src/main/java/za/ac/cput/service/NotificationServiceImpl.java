@@ -6,13 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import za.ac.cput.domain.Notification;
 import za.ac.cput.repository.NotificationRepository;
-
 import java.util.List;
-import java.util.Optional;
 
-/**
- * Service implementation for Notification.
- */
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
@@ -29,10 +24,9 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Optional<Notification> read(String id) {
-        return repository.findById(id);  // JPA returns Optional
+    public Notification read(Long id) {
+        return repository.findById(id).orElse(null);
     }
-
 
     @Override
     public Notification update(Notification notification) {
@@ -43,7 +37,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public boolean delete(String id) {
+    public boolean delete(Long id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
             return true;
@@ -54,10 +48,5 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<Notification> getAll() {
         return repository.findAll();
-    }
-
-    @Override
-    public Notification save(Notification notification) {
-        return repository.save(notification);
     }
 }

@@ -3,18 +3,40 @@
 package za.ac.cput.factory;
 
 import za.ac.cput.domain.TicketBookingDetails;
+import java.time.LocalDateTime;
 
 public class TicketBookingDetailsFactory {
 
-    public static TicketBookingDetails createTicketBookingDetails(
-            String bookingID, String eventId, String studentId, int numberOfTickets) {
+    public static TicketBookingDetails createBooking(String studentID, String eventID) {
+        if (studentID == null || studentID.trim().isEmpty()) {
+            throw new IllegalArgumentException("Student ID cannot be null or empty");
+        }
+        if (eventID == null || eventID.trim().isEmpty()) {
+            throw new IllegalArgumentException("Event ID cannot be null or empty");
+        }
 
         return new TicketBookingDetails.Builder()
-                .setBookingID(bookingID)
-                .setEventId(eventId)
-                .setStudentId(studentId)
-                .setNumberOfTickets(numberOfTickets)
+                .setStudentID(studentID)
+                .setEventID(eventID)
+                .setBookingDate(LocalDateTime.now())
+                .build();
+    }
+
+    public static TicketBookingDetails createBookingWithDate(String studentID, String eventID, LocalDateTime bookingDate) {
+        if (studentID == null || studentID.trim().isEmpty()) {
+            throw new IllegalArgumentException("Student ID cannot be null or empty");
+        }
+        if (eventID == null || eventID.trim().isEmpty()) {
+            throw new IllegalArgumentException("Event ID cannot be null or empty");
+        }
+        if (bookingDate == null) {
+            throw new IllegalArgumentException("Booking date cannot be null");
+        }
+
+        return new TicketBookingDetails.Builder()
+                .setStudentID(studentID)
+                .setEventID(eventID)
+                .setBookingDate(bookingDate)
                 .build();
     }
 }
-
