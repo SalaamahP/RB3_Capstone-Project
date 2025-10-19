@@ -131,10 +131,11 @@ export default function EventDetails() {
     });
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+  const formatCurrency = (amount:number) => {
+    if (typeof amount !== 'number') return 'R 0.00';
+    return new Intl.NumberFormat('en-ZA', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'ZAR'
     }).format(amount);
   };
 

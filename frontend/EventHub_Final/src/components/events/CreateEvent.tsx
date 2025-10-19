@@ -24,14 +24,9 @@ export default function CreateEvent() {
   });
 
   const categories = [
-    'Academic',
-    'Sports',
-    'Cultural',
-    'Social',
-    'Workshop',
-    'Conference',
-    'Entertainment',
-    'Other'
+    'SPORT',
+    'SEMINAR',
+    'OTHER',
   ];
 
   useEffect(() => {
@@ -77,7 +72,7 @@ export default function CreateEvent() {
 
       const newEvent = await apiService.createEvent(eventData);
       toast.success('Event created successfully!');
-      navigate(`/events/${newEvent.eventId}`);
+      navigate(`/event/${newEvent.eventId}`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to create event');
     } finally {
@@ -93,7 +88,7 @@ export default function CreateEvent() {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Button variant="ghost" asChild>
-            <Link to="/events">
+            <Link to="/event">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Events
             </Link>
@@ -215,7 +210,7 @@ export default function CreateEvent() {
                 <div className="space-y-2">
                   <Label htmlFor="ticketPrice">Ticket Price *</Label>
                   <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 font-semibold text-sm" >R</span>  
                     <Input
                       id="ticketPrice"
                       type="number"
@@ -224,7 +219,7 @@ export default function CreateEvent() {
                       placeholder="0.00"
                       value={formData.ticketPrice}
                       onChange={(e) => handleChange('ticketPrice', e.target.value)}
-                      className="pl-10"
+                      className="pl-7"
                       required
                     />
                   </div>
@@ -272,7 +267,7 @@ export default function CreateEvent() {
                   )}
                   {formData.ticketPrice && (
                     <span className="text-lg font-semibold text-green-600">
-                      ${Number(formData.ticketPrice).toFixed(2)}
+                      R{Number(formData.ticketPrice).toFixed(2)}
                     </span>
                   )}
                 </div>

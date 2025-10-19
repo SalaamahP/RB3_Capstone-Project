@@ -59,7 +59,7 @@ public class Event {
                 ", eventDescription='" + eventDescription + '\'' +
                 ", eventCategory=" + eventCategory +
                 ", dateTime=" + dateTime +
-                ", venue=" + venue +
+                ", venueId=" + (venue != null ? venue.getVenueId() : "null") +
                 ", userId=" + userId +
                 ", ticketPrice=" + ticketPrice +
                 '}';
