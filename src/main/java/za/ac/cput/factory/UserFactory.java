@@ -1,9 +1,16 @@
 package za.ac.cput.factory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import za.ac.cput.domain.User;
 import za.ac.cput.util.Helper;
 
+
 public class UserFactory {
+
+
+    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     public static User createUser(String name, String surname, String email, String password, String phone, String studentNumber, String staffNumber) {
 
         if (Helper.isNullOrEmpty(name)) {
@@ -31,11 +38,13 @@ public class UserFactory {
             throw new IllegalArgumentException("Staff number is invalid");
         }
 
+        String encodedPassword = passwordEncoder.encode(password);
+
         return new User.Builder()
                 .setName(name)
                 .setSurname(surname)
                 .setEmail(email)
-                .setPassword(password)
+                .setPassword(encodedPassword)
                 .setPhone(phone)
                 .setStudentNumber(studentNumber)
                 .setStaffNumber(staffNumber)

@@ -1,5 +1,6 @@
 package za.ac.cput.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import za.ac.cput.domain.Role;
@@ -12,18 +13,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "User")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "User_Id")
     private Long userId;
 
-    @Column(name = "Name",nullable = false)
+    @Column(name = "Name", nullable = false)
     private String name;
     @Column(name = "Surname", nullable = false)
     private String surname;
-    @Column(name = "Email", nullable = false)
+    @Column(name = "Email", unique = true, nullable = false )
     private String email;
     @Column(name = "Password", nullable = false)
     private String password;
@@ -34,7 +35,9 @@ public class User {
     @Column(name = "Staff_Number", unique = true, nullable = true)
     private String staffNumber;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER,   cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<UserRole> userRoles = new HashSet<>();
 
 

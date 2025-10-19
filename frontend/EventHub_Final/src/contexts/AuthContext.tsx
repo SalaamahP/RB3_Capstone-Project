@@ -59,7 +59,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const register = async (userData: Omit<User, 'id' | 'roles'> & { password: string }) => {
     try {
-      const newUser = await apiService.register(userData);
+      const { user: userCreated, token} = await apiService.register(userData);
+      localStorage.setItem('authToken', token);
+      setUser(userCreated)
+    //  const newUser = await apiService.register(userData);
       toast.success('Registration successful! Please log in.');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Registration failed');

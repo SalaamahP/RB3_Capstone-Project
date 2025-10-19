@@ -7,9 +7,9 @@ public class LoginResponseDTO {
     private Long userId;
     private String name;
     private String email;
-    private List<String> roles;
+    private List<RoleDTO> roles;
 
-    public LoginResponseDTO(Long userId, String name, String email, List<String> roles) {
+    public LoginResponseDTO(Long userId, String name, String email, List<RoleDTO> roles) {
         this.userId = userId;
         this.name = name;
         this.email = email;
@@ -28,7 +28,9 @@ public class LoginResponseDTO {
         return email;
     }
 
-    public List<String> getRoles() {
+    public List<RoleDTO> getRoles() {
         return roles;
     }
+
+    public record LoginResponse(Long userId, String name, String email, List<String> roles) {}
 }
