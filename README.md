@@ -20,6 +20,7 @@ Make sure you have these installed:
 Database Setup
 1. Start MySQL.
 2. Update src/main/resources/application.properties with your DB username & password
+3. Run the script to add an admin
 
 Running the Backend
 
