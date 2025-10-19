@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ICartService extends IService<Cart, Long> {
     @Override
-    Cart read(Long id); 
-    
+    Cart read(Long id);
+
     List<Cart> getAll();
 }
