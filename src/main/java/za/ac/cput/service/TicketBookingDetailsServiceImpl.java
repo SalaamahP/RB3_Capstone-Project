@@ -4,12 +4,9 @@ package za.ac.cput.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import za.ac.cput.domain.Notification;
 import za.ac.cput.domain.TicketBookingDetails;
 import za.ac.cput.repository.TicketBookingDetailsRepository;
-
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TicketBookingDetailsServiceImpl implements TicketBookingDetailsService {
@@ -27,9 +24,8 @@ public class TicketBookingDetailsServiceImpl implements TicketBookingDetailsServ
     }
 
     @Override
-    public TicketBookingDetails read(String id) {
-        Optional<TicketBookingDetails> details = repository.findById(id);
-        return details.orElse(null);
+    public TicketBookingDetails read(Long id) {
+        return repository.findById(id).orElse(null);
     }
 
     @Override
@@ -41,7 +37,7 @@ public class TicketBookingDetailsServiceImpl implements TicketBookingDetailsServ
     }
 
     @Override
-    public boolean delete(String id) {
+    public boolean delete(Long id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
             return true;
@@ -52,10 +48,5 @@ public class TicketBookingDetailsServiceImpl implements TicketBookingDetailsServ
     @Override
     public List<TicketBookingDetails> getAll() {
         return repository.findAll();
-    }
-
-    @Override
-    public TicketBookingDetails save(TicketBookingDetails details) {
-        return repository.save(details);
     }
 }

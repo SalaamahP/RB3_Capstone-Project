@@ -27,14 +27,9 @@ export default function EditEvent() {
   });
 
   const categories = [
-    'Academic',
-    'Sports',
-    'Cultural',
-    'Social',
-    'Workshop',
-    'Conference',
-    'Entertainment',
-    'Other'
+    'SPORT',
+    'SEMINAR',
+    'OTHER',
   ];
 
   useEffect(() => {
@@ -65,7 +60,7 @@ export default function EditEvent() {
     } catch (error) {
       console.error('Failed to load event data:', error);
       toast.error('Failed to load event data');
-      navigate('/events');
+      navigate('/event');
     } finally {
       setLoading(false);
     }
@@ -100,7 +95,7 @@ export default function EditEvent() {
 
       await apiService.updateEvent(Number(id), eventData);
       toast.success('Event updated successfully!');
-      navigate(`/events/${id}`);
+      navigate(`/event/${id}`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to update event');
     } finally {
@@ -255,7 +250,7 @@ export default function EditEvent() {
                 <div className="space-y-2">
                   <Label htmlFor="ticketPrice">Ticket Price *</Label>
                   <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 font-semibold text-sm">R</span>
                     <Input
                       id="ticketPrice"
                       type="number"
@@ -312,7 +307,7 @@ export default function EditEvent() {
                   )}
                   {formData.ticketPrice && (
                     <span className="text-lg font-semibold text-green-600">
-                      ${Number(formData.ticketPrice).toFixed(2)}
+                      R{Number(formData.ticketPrice).toFixed(2)}
                     </span>
                   )}
                 </div>

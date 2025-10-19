@@ -2,7 +2,7 @@
 Author: Patience Phakathi (222228431)
 Date: 26/08/2025
  */
-
+/*
 package za.ac.cput.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,4 +43,4 @@ public class CartItemServiceImpl implements CartItemService {
     public List<CartItem> getAll() {
         return this.repository.findAll();
     }
-}
+}*/

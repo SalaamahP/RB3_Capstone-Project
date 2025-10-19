@@ -38,7 +38,7 @@ class EventControllerTest {
 
     @BeforeAll
     public static void setUp() {
-        Venue venue = null; // placeholder, can set real Venue if available
+        Venue venue = null;
         event = EventFactory.createEvent(
                 "event123",
                 "Spring Boot Workshop",
