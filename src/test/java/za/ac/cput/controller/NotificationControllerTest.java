@@ -1,94 +1,141 @@
+//[author] Jaedon Prince, 230473474
+//[date] 25/05/2025
 package za.ac.cput.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import za.ac.cput.domain.Notification;
-import za.ac.cput.service.NotificationService;
+import za.ac.cput.factory.NotificationFactory;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-@WebMvcTest(NotificationController.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class NotificationControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private static Notification notification;
 
     @Autowired
-    private ObjectMapper mapper;
+    private TestRestTemplate restTemplate;
 
-    @MockBean
-    private NotificationService service;
+    @LocalServerPort
+    private int port;
 
-    @Test
-    void createAndGet() throws Exception {
-        Notification n = new Notification.Builder()
-                .setNotificationID("N400")
-                .setMessage("Controller Test")
-                .setStudentID("S400")
-                .setEventID("E400")
-                .build();
+    private String BASE_URL;
 
-        // Mock save
-        when(service.save(any(Notification.class))).thenReturn(n);
+    @BeforeEach
+    void init() {
+        BASE_URL = "http://localhost:" + port + "/SEMS/notifications";
 
-        mockMvc.perform(post("/notifications")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(n)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.notificationID").value("N400"));
+    }
 
-        // Mock read
-        when(service.read("N400")).thenReturn(Optional.of(n));
-
-        mockMvc.perform(get("/notifications/N400"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("Controller Test"));
+    @BeforeAll
+    public static void setUp() {
+        notification = NotificationFactory.createNotification(
+                "Your event is starting in 1 hour",
+                "STU001",
+                "EVT001"
+        );
     }
 
     @Test
-    void getAllNotifications() throws Exception {
-        Notification n1 = new Notification.Builder()
-                .setNotificationID("N401")
-                .setMessage("Test 1")
-                .setStudentID("S401")
-                .setEventID("E401")
-                .build();
+    @Order(1)
+    void testCreate() {
+        ResponseEntity<Notification> postResponse = restTemplate.postForEntity(BASE_URL, notification, Notification.class);
+        assertNotNull(postResponse.getBody());
+        assertEquals(HttpStatus.OK, postResponse.getStatusCode());
 
-        Notification n2 = new Notification.Builder()
-                .setNotificationID("N402")
-                .setMessage("Test 2")
-                .setStudentID("S402")
-                .setEventID("E402")
-                .build();
-
-        List<Notification> notifications = Arrays.asList(n1, n2);
-
-        // Mock getAll
-        when(service.getAll()).thenReturn(notifications);
-
-        mockMvc.perform(get("/notifications"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(2))
-                .andExpect(jsonPath("$[0].notificationID").value("N401"))
-                .andExpect(jsonPath("$[1].notificationID").value("N402"));
+        notification = postResponse.getBody();
+        assertNotNull(notification.getNotificationID());
+        assertEquals("Your event is starting in 1 hour", notification.getMessage());
+        assertEquals("STU001", notification.getStudentID());
+        assertEquals("EVT001", notification.getEventID());
+        System.out.println("Created: " + notification);
     }
 
     @Test
-    void deleteNotification() throws Exception {
-        // Mock delete (no return needed)
-        mockMvc.perform(delete("/notifications/N400"))
-                .andExpect(status().isNoContent());
+    @Order(2)
+    void testRead() {
+        ResponseEntity<Notification> response = restTemplate.getForEntity(BASE_URL + "/" + notification.getNotificationID(), Notification.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(notification.getNotificationID(), response.getBody().getNotificationID());
+        assertEquals("Your event is starting in 1 hour", response.getBody().getMessage());
+        System.out.println("Read: " + response.getBody());
+    }
+
+    @Test
+    @Order(3)
+    void testUpdate() {
+        Notification updatedNotification = new Notification.Builder()
+                .setNotificationID(notification.getNotificationID())
+                .setMessage("Updated: Event is starting now!")
+                .setStudentID(notification.getStudentID())
+                .setEventID(notification.getEventID())
+                .setTimestamp(notification.getTimestamp())
+                .build();
+
+        restTemplate.put(BASE_URL, updatedNotification);
+
+        ResponseEntity<Notification> response = restTemplate.getForEntity(BASE_URL + "/" + notification.getNotificationID(), Notification.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Updated: Event is starting now!", response.getBody().getMessage());
+
+        notification = response.getBody();
+        System.out.println("Updated: " + notification);
+    }
+
+    @Test
+    @Order(4)
+    void testGetAll() {
+        ResponseEntity<Notification[]> response = restTemplate.getForEntity(BASE_URL, Notification[].class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().length > 0);
+        System.out.println("All Notifications:");
+        for (Notification n : response.getBody()) {
+            System.out.println(n);
+        }
+    }
+
+    @Test
+    @Order(5)
+    void testDelete() {
+        restTemplate.delete(BASE_URL + "/" + notification.getNotificationID());
+
+        ResponseEntity<Notification> response = restTemplate.getForEntity(BASE_URL + "/" + notification.getNotificationID(), Notification.class);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        System.out.println("Deleted Notification ID: " + notification.getNotificationID());
+    }
+
+    @Test
+    @Order(6)
+    void testReadNonExistent() {
+        ResponseEntity<Notification> response = restTemplate.getForEntity(BASE_URL + "/99999", Notification.class);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        System.out.println("Read non-existent returned 404 as expected");
+    }
+
+    @Test
+    @Order(7)
+    void testUpdateNonExistent() {
+        Notification nonExistent = new Notification.Builder()
+                .setNotificationID(99999L)
+                .setMessage("This should not update")
+                .setStudentID("STU999")
+                .setEventID("EVT999")
+                .build();
+
+        restTemplate.put(BASE_URL, nonExistent);
+
+        ResponseEntity<Notification> response = restTemplate.getForEntity(BASE_URL + "/99999", Notification.class);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        System.out.println("Update non-existent returned 404 as expected");
     }
 }

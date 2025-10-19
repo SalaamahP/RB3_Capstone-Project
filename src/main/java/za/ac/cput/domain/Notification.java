@@ -2,49 +2,41 @@
 //[date] 11/05/2025
 package za.ac.cput.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-/**
- * Notification entity (builder-based).
- * Table should be created by your project's SQL (schema.sql) per team lead.
- */
 @Entity
 @Table(name = "notification")
 public class Notification {
 
     @Id
-    @Column(name = "notification_id", length = 50, nullable = false)
-    private String notificationID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long notificationID;
 
-    @Column(name = "message", length = 500, nullable = false)
+    @Column(nullable = false)
     private String message;
 
-    @Column(name = "student_id", length = 50, nullable = false)
+    @Column(nullable = false)
     private String studentID;
 
-    @Column(name = "event_id", length = 50, nullable = false)
+    @Column(nullable = false)
     private String eventID;
 
-    @Column(name = "timestamp", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime timestamp;
 
-    protected Notification() {
-        // for JPA
+    protected Notification() {}
+
+    private Notification(Builder builder) {
+        this.notificationID = builder.notificationID;
+        this.message = builder.message;
+        this.studentID = builder.studentID;
+        this.eventID = builder.eventID;
+        this.timestamp = builder.timestamp != null ? builder.timestamp : LocalDateTime.now();
     }
 
-    private Notification(Builder b) {
-        this.notificationID = b.notificationID;
-        this.message = b.message;
-        this.studentID = b.studentID;
-        this.eventID = b.eventID;
-        this.timestamp = (b.timestamp == null) ? LocalDateTime.now() : b.timestamp;
-    }
-
-    public String getNotificationID() { return notificationID; }
+    public Long getNotificationID() { return notificationID; }
     public String getMessage() { return message; }
     public String getStudentID() { return studentID; }
     public String getEventID() { return eventID; }
@@ -52,8 +44,8 @@ public class Notification {
 
     @Override
     public String toString() {
-        return "notification{" +
-                "notificationID='" + notificationID + '\'' +
+        return "Notification{" +
+                "notificationID=" + notificationID +
                 ", message='" + message + '\'' +
                 ", studentID='" + studentID + '\'' +
                 ", eventID='" + eventID + '\'' +
@@ -61,19 +53,53 @@ public class Notification {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Notification)) return false;
+        Notification that = (Notification) o;
+        return Objects.equals(notificationID, that.notificationID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(notificationID);
+    }
+
     public static class Builder {
-        private String notificationID;
+        private Long notificationID;
         private String message;
         private String studentID;
         private String eventID;
         private LocalDateTime timestamp;
 
-        public Builder setNotificationID(String notificationID) { this.notificationID = notificationID; return this; }
-        public Builder setMessage(String message) { this.message = message; return this; }
-        public Builder setStudentID(String studentID) { this.studentID = studentID; return this; }
-        public Builder setEventID(String eventID) { this.eventID = eventID; return this; }
-        public Builder setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; return this; }
+        public Builder setNotificationID(Long notificationID) {
+            this.notificationID = notificationID;
+            return this;
+        }
 
-        public Notification build() { return new Notification(this); }
+        public Builder setMessage(String message) {
+            this.message = message;
+            return this;
+        }
+
+        public Builder setStudentID(String studentID) {
+            this.studentID = studentID;
+            return this;
+        }
+
+        public Builder setEventID(String eventID) {
+            this.eventID = eventID;
+            return this;
+        }
+
+        public Builder setTimestamp(LocalDateTime timestamp) {
+            this.timestamp = timestamp;
+            return this;
+        }
+
+        public Notification build() {
+            return new Notification(this);
+        }
     }
 }

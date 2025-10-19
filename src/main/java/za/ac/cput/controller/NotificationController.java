@@ -2,6 +2,7 @@
 //[date] 25/05/2025
 package za.ac.cput.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import za.ac.cput.domain.Notification;
@@ -15,30 +16,37 @@ public class NotificationController {
 
     private final NotificationService service;
 
+    @Autowired
     public NotificationController(NotificationService service) {
         this.service = service;
     }
 
     @PostMapping
-    public ResponseEntity<Notification> create(@RequestBody Notification n) {
-        return ResponseEntity.ok(service.save(n));
+    public ResponseEntity<Notification> create(@RequestBody Notification notification) {
+        Notification created = service.create(notification);
+        return ResponseEntity.ok(created);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Notification> read(@PathVariable String id) {
-        return service.read(id)   // Optional<Notification>
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Notification> read(@PathVariable Long id) {
+        Notification notification = service.read(id);
+        return notification != null ? ResponseEntity.ok(notification) : ResponseEntity.notFound().build();
     }
 
-    @GetMapping
-    public List<Notification> getAll() {
-        return service.getAll();
+    @PutMapping
+    public ResponseEntity<Notification> update(@RequestBody Notification notification) {
+        Notification updated = service.update(notification);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable String id) {
-        service.delete(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        boolean deleted = service.delete(id);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Notification>> getAll() {
+        return ResponseEntity.ok(service.getAll());
     }
 }

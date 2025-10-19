@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 import za.ac.cput.domain.Notification;
 
 @Repository
-public interface NotificationRepository extends JpaRepository<Notification, String> {
+public interface NotificationRepository extends JpaRepository<Notification, Long> {
 }
+
