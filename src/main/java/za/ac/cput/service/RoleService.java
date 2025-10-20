@@ -19,6 +19,8 @@ public class RoleService implements IRoleService {
         this.roleRepository = roleRepository;
     }
 
+
+
     @PostConstruct
     public void init() {
         createIfNotExists("STUDENT","Default role for all new users");

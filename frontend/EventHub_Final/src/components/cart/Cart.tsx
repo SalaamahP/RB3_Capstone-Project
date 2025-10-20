@@ -14,7 +14,6 @@ import {
   Minus, 
   Calendar, 
   MapPin,
-  CreditCard,
   ArrowLeft
 } from 'lucide-react';
 import { toast } from '../ui/sonner';
@@ -25,12 +24,10 @@ export default function Cart() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const paymentOptions = [
-    { value: 'credit_card', label: 'Credit Card' },
-    { value: 'debit_card', label: 'Debit Card' },
-    { value: 'paypal', label: 'PayPal' },
-    { value: 'bank_transfer', label: 'Bank Transfer' },
-    { value: 'cash', label: 'Cash on Pickup' }
-  ];
+    { value: 'CASH', label: 'Cash on Pickup' },    
+    { value: 'DEPOSIT', label: 'Deposit' },
+];
+
 
   const handleQuantityChange = async (cartItemId: number, newQuantity: number) => {
     if (newQuantity < 1) {
@@ -69,6 +66,11 @@ export default function Cart() {
     }
   };
 
+  const clearMockCart = () => {
+    localStorage.removeItem('mockCart');
+    window.location.reload();
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       weekday: 'short',
@@ -80,9 +82,9 @@ export default function Cart() {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-ZA', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'ZAR'
     }).format(amount);
   };
 
@@ -257,10 +259,7 @@ export default function Cart() {
 
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <CreditCard className="h-5 w-5" />
-                  <span>Payment Options</span>
-                </CardTitle>
+                <CardTitle>Payment Options</CardTitle>
                 <CardDescription>
                   Choose how you'd like to pay for your tickets
                 </CardDescription>
@@ -305,6 +304,32 @@ export default function Cart() {
                 </Button>
                 <Button variant="outline" className="w-full" asChild>
                   <Link to="/bookings">View Past Bookings</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Debug Section - Remove in production */}
+            <Card className="border-yellow-200 bg-yellow-50">
+              <CardHeader>
+                <CardTitle className="text-yellow-800">🔧 Debug Info</CardTitle>
+                <CardDescription className="text-yellow-700">
+                  Development mode - Backend status
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <p className="text-sm text-yellow-800">
+                  Backend URL: {import.meta.env.VITE_API_URL || 'http://localhost:8080/SEMS'}
+                </p>
+                <p className="text-sm text-yellow-800">
+                  Using mock data: Cart items are stored in localStorage
+                </p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={clearMockCart}
+                  className="w-full text-yellow-800 border-yellow-300"
+                >
+                  Clear Mock Cart
                 </Button>
               </CardContent>
             </Card>

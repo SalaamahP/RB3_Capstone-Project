@@ -2,96 +2,47 @@
 // Date: 11 May 2025
 package za.ac.cput.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@Table(name = "ticket_booking_details")
 public class TicketBookingDetails {
 
     @Id
-    private String bookingID;
-    private String eventId;
-    private String studentId;
-    private int numberOfTickets;
-    private LocalDateTime bookingDate; // <-- new field
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long bookingID;
 
-    // no-args constructor for JPA
+    @Column(nullable = false)
+    private String studentID;
+
+    @Column(nullable = false)
+    private String eventID;
+
+    @Column(nullable = false)
+    private LocalDateTime bookingDate;
+
     protected TicketBookingDetails() {}
 
     private TicketBookingDetails(Builder builder) {
         this.bookingID = builder.bookingID;
-        this.eventId = builder.eventId;
-        this.studentId = builder.studentId;
-        this.numberOfTickets = builder.numberOfTickets;
-        this.bookingDate = builder.bookingDate; // <-- assign from builder
+        this.studentID = builder.studentID;
+        this.eventID = builder.eventID;
+        this.bookingDate = builder.bookingDate != null ? builder.bookingDate : LocalDateTime.now();
     }
 
-    public String getBookingID() {
-        return bookingID;
-    }
-
-    public String getEventId() {
-        return eventId;
-    }
-
-    public String getStudentId() {
-        return studentId;
-    }
-
-    public int getNumberOfTickets() {
-        return numberOfTickets;
-    }
-
-    public LocalDateTime getBookingDate() {
-        return bookingDate;
-    }
-
-    public static class Builder {
-        private String bookingID;
-        private String eventId;
-        private String studentId;
-        private int numberOfTickets;
-        private LocalDateTime bookingDate; // <-- new field in builder
-
-        public Builder setBookingID(String bookingID) {
-            this.bookingID = bookingID;
-            return this;
-        }
-
-        public Builder setEventId(String eventId) {
-            this.eventId = eventId;
-            return this;
-        }
-
-        public Builder setStudentId(String studentId) {
-            this.studentId = studentId;
-            return this;
-        }
-
-        public Builder setNumberOfTickets(int numberOfTickets) {
-            this.numberOfTickets = numberOfTickets;
-            return this;
-        }
-
-        public Builder setBookingDate(LocalDateTime bookingDate) { // <-- new setter
-            this.bookingDate = bookingDate;
-            return this;
-        }
-
-        public TicketBookingDetails build() {
-            return new TicketBookingDetails(this);
-        }
-    }
+    public Long getBookingID() { return bookingID; }
+    public String getStudentID() { return studentID; }
+    public String getEventID() { return eventID; }
+    public LocalDateTime getBookingDate() { return bookingDate; }
 
     @Override
     public String toString() {
         return "TicketBookingDetails{" +
-                "bookingID='" + bookingID + '\'' +
-                ", eventId='" + eventId + '\'' +
-                ", studentId='" + studentId + '\'' +
-                ", numberOfTickets=" + numberOfTickets +
+                "bookingID=" + bookingID +
+                ", studentID='" + studentID + '\'' +
+                ", eventID='" + eventID + '\'' +
                 ", bookingDate=" + bookingDate +
                 '}';
     }
@@ -108,5 +59,35 @@ public class TicketBookingDetails {
     public int hashCode() {
         return Objects.hash(bookingID);
     }
-}
 
+    public static class Builder {
+        private Long bookingID;
+        private String studentID;
+        private String eventID;
+        private LocalDateTime bookingDate;
+
+        public Builder setBookingID(Long bookingID) {
+            this.bookingID = bookingID;
+            return this;
+        }
+
+        public Builder setStudentID(String studentID) {
+            this.studentID = studentID;
+            return this;
+        }
+
+        public Builder setEventID(String eventID) {
+            this.eventID = eventID;
+            return this;
+        }
+
+        public Builder setBookingDate(LocalDateTime bookingDate) {
+            this.bookingDate = bookingDate;
+            return this;
+        }
+
+        public TicketBookingDetails build() {
+            return new TicketBookingDetails(this);
+        }
+    }
+}

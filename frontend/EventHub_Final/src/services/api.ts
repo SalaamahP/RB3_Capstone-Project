@@ -22,7 +22,7 @@ const API_PATHS = {
 // ✅ Interfaces
 export interface User {
   id: number;
-  userid: string;
+  userId: string;
   name: string;
   surname: string;
   email: string;
@@ -31,6 +31,7 @@ export interface User {
 }
 
 export interface Role {
+  roleId: number;
   roleName: string;
 }
 
@@ -118,57 +119,61 @@ class ApiService {
     return response.json();
   }
 
+  // // Authentication
+  // async login(userid: string, password: string): Promise<{ user: User; token: string }> {
+  //   // Mock response for demo purposes
+  //   if (userid === 'admin' && password === 'admin123') {
+  //     return {
+  //       user: {
+  //         id: 1,
+  //         userId: 'admin',
+  //         name: 'Admin',
+  //         surname: 'User',
+  //         email: 'admin@university.edu',
+  //         phone: '+1234567890',
+  //         roles: [{roleId: 1, roleName: 'ADMIN' }]
+  //       },
+  //       token: 'mock-admin-token'
+  //     };
+  //   } else if (userid === 'student001' && password === 'password') {
+  //     return {
+  //       user: {
+  //         id: 2,
+  //         userId: 'student001',
+  //         name: 'John',
+  //         surname: 'Doe',
+  //         email: 'john.doe@university.edu',
+  //         phone: '+1234567891',
+  //         roles: [{roleId: 1, roleName: 'STUDENT' }]
+  //       },
+  //       token: 'mock-student-token'
+  //     };
+  //   }
+
   // Authentication
-  async login(userid: string, password: string): Promise<{ user: User; token: string }> {
-    // Mock response for demo purposes
-    if (userid === 'admin' && password === 'admin123') {
-      return {
-        user: {
-          id: 1,
-          userid: 'admin',
-          name: 'Admin',
-          surname: 'User',
-          email: 'admin@university.edu',
-          phone: '+1234567890',
-          roles: [{ roleName: 'ADMIN' }]
-        },
-        token: 'mock-admin-token'
-      };
-    } else if (userid === 'student001' && password === 'password') {
-      return {
-        user: {
-          id: 2,
-          userid: 'student001',
-          name: 'John',
-          surname: 'Doe',
-          email: 'john.doe@university.edu',
-          phone: '+1234567891',
-          roles: [{ roleName: 'STUDENT' }]
-        },
-        token: 'mock-student-token'
-      };
-    }
+  async login(email: string, password: string): Promise<{ user: User; token: string }> {
+   
 
     // ✅ ACTUAL API CALL — FIXED: Added credentials: 'include'
     const response = await fetch(`${API_BASE_URL}${API_PATHS.AUTH}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userid, password }),
+      body: JSON.stringify({ email, password }),
       credentials: 'include', // ✅ Required for CORS with credentials
     });
     return this.handleResponse(response);
   }
 
-  async register(userData: Omit<User, 'id' | 'roles'> & { password: string }): Promise<User> {
+  async register(userData: Omit<User, 'id' | 'roles'> & { password: string }): Promise<{user: User; token: string}> {
     // Mock implementation
     const newUser: User = {
       id: Date.now(),
-      userid: userData.userid,
+      userId: userData.userId,
       name: userData.name,
       surname: userData.surname,
       email: userData.email,
       phone: userData.phone,
-      roles: [{ roleName: 'STUDENT' }]
+      roles: [{roleId: 2, roleName: 'STUDENT' }]
     };
 
     try {
@@ -179,7 +184,8 @@ class ApiService {
       });
       return this.handleResponse(response);
     } catch (error) {
-      return newUser;
+      console.error("Registration failed:", error);
+      throw error;
     }
   }
 
@@ -190,22 +196,22 @@ class ApiService {
     if (token === 'mock-admin-token') {
       return {
         id: 1,
-        userid: 'admin',
+        userId: 'admin',
         name: 'Admin',
         surname: 'User',
         email: 'admin@university.edu',
         phone: '+1234567890',
-        roles: [{ roleName: 'ADMIN' }]
+        roles: [{ roleId: 1,roleName: 'ADMIN' }]
       };
     } else if (token === 'mock-student-token') {
       return {
         id: 2,
-        userid: 'student001',
+        userId: 'student001',
         name: 'John',
         surname: 'Doe',
         email: 'john.doe@university.edu',
         phone: '+1234567891',
-        roles: [{ roleName: 'STUDENT' }]
+        roles: [{roleId: 2, roleName: 'STUDENT' }]
       };
     }
 
@@ -552,6 +558,47 @@ class ApiService {
       throw new Error(`Failed to mark notification as read: ${response.status}`);
     }
   }
-}
+
+
+async getUsers() {
+  const token = localStorage.getItem('authToken');
+  const res = await fetch(`${API_BASE_URL}/user/getAll`, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}`}),
+    },
+    });
+    if (!res.ok) throw new Error('Failed to fetch users');
+    return res.json();
+  }
+
+  async addUserRole(userId: number, roleId: number){
+    const token = localStorage.getItem('authToken');
+     const res = await fetch(`${API_BASE_URL}/user/${userId}/addRole/${roleId}`, {
+      method: 'POST',
+      headers: {
+       'Content-Type': 'application/json',
+       ...(token && { Authorization: `Bearer ${token}`}),
+       },
+    });
+    if (!res.ok) throw new Error('Failed to add user role');
+    return res.json();
+  }
+
+   async removeUserRole(userId: number, roleId: number){
+    const token = localStorage.getItem('authToken');
+     const res = await fetch(`${API_BASE_URL}/user/${userId}/removeRole/${roleId}`, {
+      method: 'DELETE',
+      headers: {
+       'Content-Type': 'application/json',
+       ...(token && { Authorization: `Bearer ${token}`}),
+       },
+    });
+    if (!res.ok) throw new Error('Failed to remove user role');
+    return res.json();
+  }
+
+  }
+
 
 export default new ApiService();

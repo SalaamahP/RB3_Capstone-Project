@@ -1,4 +1,4 @@
-package za.ac.cput.factory;
+/*package za.ac.cput.factory;
 
 import org.junit.jupiter.api.Test;
 import za.ac.cput.domain.Rsvp.Status;
@@ -24,4 +24,4 @@ class RsvpFactoryTest {
         System.out.println(rsvp + " created successfully");
     }
 
-}
+}*/

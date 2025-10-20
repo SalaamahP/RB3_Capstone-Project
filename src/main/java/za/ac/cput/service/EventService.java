@@ -1,18 +1,54 @@
-/* EventService.java
- * EventService class
- * Author: Nobahle Vuyiswa Nzimande (222641533)
- * Date: 25 May 2025
- */
 package za.ac.cput.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import za.ac.cput.domain.Event;
+import za.ac.cput.repository.EventRepository;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface EventService {
-    Event create(Event event);
-    Event read(long id);
-    Event update(Event event);
-    boolean delete(long id);
-    List<Event> getAll();
+@Service
+public class EventService implements IEventService {
+
+    private final EventRepository eventRepository;
+
+    @Autowired
+    public EventService(EventRepository eventRepository) {
+        this.eventRepository = eventRepository;
+    }
+
+    @Override
+    public Event create(Event event) {
+        return eventRepository.save(event);
+    }
+
+    @Override
+    public Event read(long id) {
+        Optional<Event> event = eventRepository.findById(id);
+        return event.orElse(null);
+    }
+
+    @Override
+    public Event update(Event event) {
+        if (eventRepository.existsById(event.getEventId())) {
+            return eventRepository.save(event);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean delete(long id) {
+        if (eventRepository.existsById(id)) {
+            eventRepository.deleteById(id);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public List<Event> getAll() {
+        return eventRepository.findAll();
+    }
 }

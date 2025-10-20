@@ -1,4 +1,4 @@
-package za.ac.cput.domain;
+/*package za.ac.cput.domain;
 
 import jakarta.persistence.*;
 
@@ -108,4 +108,4 @@ public class Rsvp {
             return new Rsvp(this);
         }
     }
-}
+}*/

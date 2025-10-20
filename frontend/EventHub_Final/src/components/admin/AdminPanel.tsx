@@ -18,6 +18,7 @@ import {
   Edit,
   Trash2
 } from 'lucide-react';
+import { toast } from '../ui/sonner';
 
 export default function AdminPanel() {
   const [stats, setStats] = useState({
@@ -30,11 +31,44 @@ export default function AdminPanel() {
   const [recentEvents, setRecentEvents] = useState<Event[]>([]);
   const [recentBookings, setRecentBookings] = useState<TicketBooking[]>([]);
   const [venues, setVenues] = useState<Venue[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     loadAdminData();
+    loadUsers();
   }, []);
+
+  const loadUsers = async () => {
+    setLoading(true);
+        try {
+          const data = await apiService.getUsers();
+          setUsers(data);
+        }catch (error){
+          console.error("Failed to load users", error);
+        }
+      };
+
+      const handleAddRole = async (userId: number, roleId: number) =>{
+        try {
+          await apiService.addUserRole(userId, roleId);
+          toast.success("User Role added successfully");
+          loadUsers();
+        } catch (error){
+          toast.error("Failed to add User Role");
+        }
+      };
+
+       const handleRemoveRole = async (userId: number, roleId: number) =>{
+        try {
+          await apiService.removeUserRole(userId, roleId);
+          toast.success("User Role removed successfully");
+          loadUsers();
+        } catch (error){
+          toast.error("Failed to remove User Role");
+        }
+      };
 
   const loadAdminData = async () => {
     try {
@@ -43,6 +77,8 @@ export default function AdminPanel() {
         apiService.getVenues(),
         apiService.getBookings()
       ]);
+
+      
 
       // Calculate stats
       const totalRevenue = bookingsData.reduce((sum, booking) => sum + booking.total, 0);
@@ -75,9 +111,9 @@ export default function AdminPanel() {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-ZA', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'ZAR'
     }).format(amount);
   };
 
@@ -187,6 +223,7 @@ export default function AdminPanel() {
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="events">Events</TabsTrigger>
           <TabsTrigger value="venues">Venues</TabsTrigger>
           <TabsTrigger value="bookings">Bookings</TabsTrigger>
@@ -225,6 +262,9 @@ export default function AdminPanel() {
                 </div>
               </CardContent>
             </Card>
+
+          
+            
 
             {/* Recent Bookings */}
             <Card>
@@ -372,6 +412,65 @@ export default function AdminPanel() {
             </CardContent>
           </Card>
         </TabsContent>
+        <TabsContent value="users" className= "space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>User Management</CardTitle>
+                  <p className="text-sm text-gray-500">
+                    View and Manage User Roles
+                    </p>
+                </CardHeader>
+                <CardContent>
+                  {loading ? (
+                    <p>Loading users...</p>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full border rounded-lg">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-4 py-2 text-left text-sm text-gray-600">User Id</th>
+                            <th className="px-4 py-2 text-left text-sm text-gray-600">Name</th>
+                            <th className="px-4 py-2 text-left text-sm text-gray-600">Email</th>
+                            <th className="px-4 py-2 text-left text-sm text-gray-600">Role</th>
+                            <th className="px-4 py-2 text-left text-sm text-center">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {users.map((user)=>(
+                            <tr key={user.userId} className="Border-t hover:bg-gray-50">
+                            <td className="px-4 py-2">{user.userId}</td>
+                            <td className="px-4 py-2">{user.name} {user.surname}</td>
+                            <td className="px-4 py-2">{user.email}</td>
+                            <td className="px-4 py-2">
+                            {user.roles?.map(r => ( <Badge key={r.roleId} variant="secondary" className="mr-1"> {r.roleName} </Badge> ))}
+                            </td>
+                            <td className="px-4 py-2 text-center space-x-2">
+                              <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleAddRole(Number(user.userId), 1)}
+                              >
+                                Promote
+                              </Button>
+                              <Button
+                              size="sm"
+                              variant="destructive"
+                            onClick={() => handleRemoveRole(Number(user.userId), 1)}
+                              >
+                                Demote
+                              </Button>
+                            </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            
       </Tabs>
     </div>
   );

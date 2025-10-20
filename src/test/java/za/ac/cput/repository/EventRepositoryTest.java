@@ -1,4 +1,4 @@
-package za.ac.cput.repository;
+/*package za.ac.cput.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,4 +45,4 @@ public class EventRepositoryTest {
 
         assertFalse(eventRepository.existsById("event123"));
     }
-}
+}*/

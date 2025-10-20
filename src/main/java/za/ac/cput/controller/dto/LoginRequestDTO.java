@@ -2,15 +2,15 @@ package za.ac.cput.controller.dto;
 
 public class LoginRequestDTO {
 
-    private String userId;
+    private String email;
     private String password;
 
-    public String getUserId() {
-        return userId;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {

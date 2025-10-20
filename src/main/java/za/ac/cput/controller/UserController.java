@@ -6,12 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import za.ac.cput.controller.dto.UserDTO;
 import za.ac.cput.domain.Role;
 import za.ac.cput.domain.User;
 import za.ac.cput.service.RoleService;
 import za.ac.cput.service.UserService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
@@ -26,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/addRole/{roleId}")
-    public User addRole(@PathVariable Long userId, @PathVariable Long roleId) {
+    public ResponseEntity<UserDTO>  addRole(@PathVariable Long userId, @PathVariable Long roleId) {
         User user = userService.read(userId);
         Role role = roleService.read(roleId);
 
@@ -34,7 +36,15 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User or Role not found");    }
 
             user.addRole(role);
-            return userService.update(user);
+        List<String> roles = user.getUserRoles().stream()
+                .map(ur-> ur.getRole().getRoleName())
+                .collect(Collectors.toList());
+
+        UserDTO userDTO = new UserDTO(user.getUserId(), user.getName(), user.getEmail(), roles);
+
+        return ResponseEntity.ok(userDTO);
+
+
 
 
 
@@ -78,7 +88,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}/removeRole/{roleId}")
-    public ResponseEntity<?> removeRole(@PathVariable Long userId, @PathVariable Long roleId) {
+    public ResponseEntity<UserDTO> removeRole(@PathVariable Long userId, @PathVariable Long roleId) {
         User user = userService.read(userId);
         Role role = roleService.read(roleId);
 
@@ -88,7 +98,14 @@ public class UserController {
 
             user.getUserRoles().removeIf(ur -> ur.getRole().equals(role));
             userService.update(user);
-            return ResponseEntity.ok("Role removed successfully");
+
+            List<String> roles = user.getUserRoles().stream()
+                    .map(ur-> ur.getRole().getRoleName())
+                    .collect(Collectors.toList());
+
+            UserDTO userDTO = new UserDTO(user.getUserId(), user.getName(), user.getEmail(), roles);
+
+            return ResponseEntity.ok(userDTO);
 
     }
 
