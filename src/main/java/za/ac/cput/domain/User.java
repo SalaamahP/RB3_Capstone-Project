@@ -43,6 +43,14 @@ public class User {
 
    protected User() {}
 
+   protected User(String password, String name, String surname, String phone, String email) {
+       this.password = password;
+       this.name = name;
+       this.surname = surname;
+       this.phone = phone;
+       this.email = email;
+   }
+
     private User(Builder builder) {
         this.userId = builder.userId;
         this.name = builder.name;
@@ -59,6 +67,7 @@ public class User {
 
 
     public Long getUserId() { return userId; }
+    public Long getId() { return userId; }
     public String getName() { return name; }
     public String getSurname() { return surname; }
     public String getEmail() { return email; }
