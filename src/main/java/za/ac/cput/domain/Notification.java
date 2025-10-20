@@ -36,11 +36,21 @@ public class Notification {
         this.timestamp = builder.timestamp != null ? builder.timestamp : LocalDateTime.now();
     }
 
+    // GETTERS AND SETTERS - COMPLETE
     public Long getNotificationID() { return notificationID; }
+    public void setNotificationID(Long notificationID) { this.notificationID = notificationID; }
+
     public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+
     public String getStudentID() { return studentID; }
+    public void setStudentID(String studentID) { this.studentID = studentID; }
+
     public String getEventID() { return eventID; }
+    public void setEventID(String eventID) { this.eventID = eventID; }
+
     public LocalDateTime getTimestamp() { return timestamp; }
+    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
 
     @Override
     public String toString() {
