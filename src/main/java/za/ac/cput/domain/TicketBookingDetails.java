@@ -32,10 +32,18 @@ public class TicketBookingDetails {
         this.bookingDate = builder.bookingDate != null ? builder.bookingDate : LocalDateTime.now();
     }
 
+    // GETTERS AND SETTERS - COMPLETE
     public Long getBookingID() { return bookingID; }
+    public void setBookingID(Long bookingID) { this.bookingID = bookingID; }
+
     public String getStudentID() { return studentID; }
+    public void setStudentID(String studentID) { this.studentID = studentID; }
+
     public String getEventID() { return eventID; }
+    public void setEventID(String eventID) { this.eventID = eventID; }
+
     public LocalDateTime getBookingDate() { return bookingDate; }
+    public void setBookingDate(LocalDateTime bookingDate) { this.bookingDate = bookingDate; }
 
     @Override
     public String toString() {
@@ -91,3 +99,4 @@ public class TicketBookingDetails {
         }
     }
 }
+
